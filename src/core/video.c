@@ -12,7 +12,7 @@
 #include "video.h"
 
 #define VIDEO
-#define SYNC
+#define VSYNC
 
 void render_line(struct Context *this, uint16_t line_number);
 uint8_t get_pixel_data(struct Context *this, const uint8_t *tile_data, uint8_t x, uint8_t y);
@@ -34,7 +34,7 @@ void video_init() {
         exit(EXIT_FAILURE);
     } else {
         renderer = SDL_CreateRenderer(window, -1,
-#ifdef SYNC
+#ifdef VSYNC
                                       SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
 #else
                                       SDL_RENDERER_SOFTWARE);
@@ -85,9 +85,11 @@ bool video_handle_get_u8(struct Context *this, uint16_t address, uint8_t *ret_va
         case 0xff49: // OBP1 - Object Palette 1 Data (R/W) - Non CGB Mode Only
             *ret_value = this->video.OBP1.raw;
             return true;
-        case 0xff4a: // window
-        case 0xff4b:
-            *ret_value = 0;
+        case 0xff4a: // WY - Window Y Position (R/W)
+            *ret_value = this->video.WY;
+            return true;
+        case 0xff4b: // WX - Window X Position minus 7 (R/W)
+            *ret_value = this->video.WX;
             return true;
     }
     return false;
@@ -153,9 +155,11 @@ bool video_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
             return true;
         case 0xff4a: // WY - Window Y Position (R/W)
             d_printf("WY %02x\n", value);
+            this->video.WY = value;
             return true;
         case 0xff4b: // WX - Window X Position minus 7 (R/W)
             d_printf("WX %02x\n", value);
+            this->video.WX = value;
             return true;
     }
 
@@ -244,15 +248,15 @@ void set_pixel(struct Context *this, uint8_t x, uint8_t y, uint8_t bit_color) {
 }
 
 void render_line(struct Context *this, uint16_t line_number) {
-    struct Pixel *line = this->video.screen[line_number];
+    // render background
     if (this->video.LCDC.bg_window_display_priority) {
-        uint8_t posY = line_number + this->video.SCY;
+        uint8_t pos_y = line_number + this->video.SCY;
         uint8_t *bg_tile_map = this->vram +
             (this->video.LCDC.bg_tile_map_display_select ? 0x1c00 : 0x1800);
         uint8_t *tile_data = this->vram +
             (this->video.LCDC.bg_window_tile_data_select ? 0x0000 : 0x0800);
-        uint8_t tile_y = posY / 8;
-        uint8_t tile_pixel_y = posY % 8;
+        uint8_t tile_y = pos_y / 8;
+        uint8_t tile_pixel_y = pos_y % 8;
         for (uint8_t x = 0; x < 160; x++) {
             uint8_t pos_x = x + this->video.SCX;
             uint8_t tile_x = pos_x / 8;
@@ -269,10 +273,37 @@ void render_line(struct Context *this, uint16_t line_number) {
 
             set_pixel(this, x, line_number, pixel_data);
         }
-    } else {
-        memset(line, 0xff, sizeof(this->video.screen[0]));
     }
 
+    // render window
+    if (this->video.LCDC.window_display_enable && (line_number >= this->video.WY)) {
+        uint8_t pos_y = line_number - this->video.WY;
+        uint8_t *window_tile_map = this->vram +
+            (this->video.LCDC.window_tile_map_display_select ? 0x1c00 : 0x1800);
+        uint8_t *tile_data = this->vram +
+            (this->video.LCDC.bg_window_tile_data_select ? 0x0000 : 0x0800);
+        uint8_t tile_y = pos_y / 8;
+        uint8_t tile_pixel_y = pos_y % 8;
+        uint8_t min_x = this->video.WX >= 7 ? this->video.WX - 7 : 0;
+        for (uint8_t x = min_x; x < 160; x++) {
+            uint8_t pos_x = x - this->video.WX + 7;
+            uint8_t tile_x = pos_x / 8;
+            uint8_t tile_pixel_x = pos_x % 8;
+
+            uint8_t tile_number = window_tile_map[(tile_y * 32) + tile_x];
+            if (!this->video.LCDC.bg_window_tile_data_select) {
+                tile_number += 128;
+            }
+            uint8_t *selected_tile_data = tile_data + (tile_number * 16); // 2 bytes per row, 8x8 pixels
+            uint8_t pixel_data = get_pixel_data(this, selected_tile_data, tile_pixel_x, tile_pixel_y);
+
+            pixel_data = (this->video.BGP.raw >> (pixel_data * 2)) & 0x03;
+
+            set_pixel(this, x, line_number, pixel_data);
+        }
+    }
+
+    // render sprites
     if (this->video.LCDC.obj_display_enable) {
         const struct Sprite *visible_sprites[sizeof(this->sprites)];
         uint8_t sprite_height = this->video.LCDC.obj_size ? 16 : 8;
@@ -347,6 +378,7 @@ void update_frame(struct Context *this) {
     SDL_GetWindowSize(window, &rect.w, &rect.h);
     SDL_RenderCopy(renderer, texture, NULL, &rect);
     SDL_RenderPresent(renderer);
+    memset(this->video.screen, 0xff, sizeof(this->video.screen));
 
     SDL_Event e;
     while (SDL_PollEvent(&e)) {

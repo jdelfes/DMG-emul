@@ -34,7 +34,7 @@ bool timer_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
             this->timer.TIMA = value;
             return true;
         case 0xff06: // TMA - Timer Modulo (R/W)
-            printf("TMA %02x\n", value);
+            d_printf("TMA %02x\n", value);
             this->timer.TMA = value;
             return true;
         case 0xff07: // TAC - Timer Control (R/W)
