@@ -20,6 +20,7 @@
 		AD4DBBB1204B929A00E12E77 /* cb_prefix.c in Sources */ = {isa = PBXBuildFile; fileRef = AD4DBBAC204B929A00E12E77 /* cb_prefix.c */; };
 		AD4DBBB2204B929A00E12E77 /* cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = AD4DBBAD204B929A00E12E77 /* cpu.c */; };
 		AD4DBBB3204B929A00E12E77 /* opcodes.c in Sources */ = {isa = PBXBuildFile; fileRef = AD4DBBAE204B929A00E12E77 /* opcodes.c */; };
+		ADF0F362204C8F84008A717A /* mbc.c in Sources */ = {isa = PBXBuildFile; fileRef = ADF0F361204C8F84008A717A /* mbc.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -62,6 +63,8 @@
 		AD4DBBAF204B929A00E12E77 /* opcodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opcodes.h; sourceTree = "<group>"; };
 		AD4DBBB0204B929A00E12E77 /* cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cpu.h; sourceTree = "<group>"; };
 		AD4DBBB4204B92A000E12E77 /* definitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = definitions.h; sourceTree = "<group>"; };
+		ADF0F360204C8F84008A717A /* mbc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mbc.h; sourceTree = "<group>"; };
+		ADF0F361204C8F84008A717A /* mbc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mbc.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +114,8 @@
 				AD4DBB9B204B928E00E12E77 /* joypad.c */,
 				AD4DBB9C204B928E00E12E77 /* joypad.h */,
 				AD4DBB9D204B928E00E12E77 /* main.c */,
+				ADF0F361204C8F84008A717A /* mbc.c */,
+				ADF0F360204C8F84008A717A /* mbc.h */,
 				AD4DBB96204B928E00E12E77 /* memory.c */,
 				AD4DBB8E204B928E00E12E77 /* memory.h */,
 				AD4DBB90204B928E00E12E77 /* serial.c */,
@@ -210,6 +215,7 @@
 				AD4DBBA5204B928E00E12E77 /* memory.c in Sources */,
 				AD4DBBA9204B928E00E12E77 /* utils.c in Sources */,
 				AD4DBBA6204B928E00E12E77 /* sound.c in Sources */,
+				ADF0F362204C8F84008A717A /* mbc.c in Sources */,
 				AD4DBBB2204B929A00E12E77 /* cpu.c in Sources */,
 				AD4DBBA8204B928E00E12E77 /* main.c in Sources */,
 				AD4DBBB3204B929A00E12E77 /* opcodes.c in Sources */,

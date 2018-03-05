@@ -46,40 +46,11 @@ uint8_t OpcodesTiming[] = {
     12, 12, 8, 4, 0, 16, 8, 16, 12, 8, 16, 4, 0, 0, 8, 16 // Fx
 };
 
-uint8_t* code_ptr_resolve(struct Context *this, uint16_t address) {
-    if (this->bios_rom && address < 0x0100) {
-        return this->bios_rom + address;
-    } else if (address < 0x4000) {
-        return this->rom_data + address;
-    } else if (address < 0x8000) {
-        if (!this->rom_extra_bank) {
-            fprintf(stderr, "extra bank not initialized!\n");
-            exit(EXIT_FAILURE);
-        }
-        return this->rom_extra_bank + address - 0x4000;
-    } else if (address >= 0xc000 && address <= 0xcfff) {
-        return this->wram_bank_0 + address - 0xc000;
-    } else if (address >= 0xd000 && address <= 0xdfff) {
-        return this->wram_bank_1 + address - 0xd000;
-//    } else if (address >= 0xe000 && address <= 0xefff) {
-//        return this->wram_bank_0 + address - 0xe000; // echo
-//    } else if (address >= 0xf000 && address <= 0xfdff) {
-//        return this->wram_bank_1 + address - 0xf000; // echo
-    } else if (address >= 0xfe00 && address <= 0xfe9f) {
-        return this->oam + address - 0xfe00;
-    } else if (address >= 0xff80 && address <= 0xfffe) {
-        return this->hram + address - 0xff80;
-    } else {
-        fprintf(stderr, "weird code address %04x\n", address);
-        print_debug(this, EXIT_FAILURE);
-    }
-}
-
 struct Opcode next_opcode(struct Context *this) {
-    uint8_t *code_ptr = code_ptr_resolve(this, this->cpu.registers.PC);
+    uint8_t temp_u8;
     struct Opcode opcode;
 
-    opcode.code = code_ptr[0];
+    opcode.code = get_mem_u8(this, this->cpu.registers.PC);
     opcode.size = OpcodeSize[opcode.code];
     switch (opcode.size) {
         case 0:
@@ -88,10 +59,11 @@ struct Opcode next_opcode(struct Context *this) {
         case 1:
             break;
         case 2:
-            opcode.u8 = code_ptr[1];
+            opcode.u8 = get_mem_u8(this, this->cpu.registers.PC + 1);
             break;
         case 3:
-            opcode.u16 = (code_ptr[2] << 8) | code_ptr[1];
+            temp_u8 = get_mem_u8(this, this->cpu.registers.PC + 1);
+            opcode.u16 = (get_mem_u8(this, this->cpu.registers.PC + 2) << 8) | temp_u8;
             break;
         default:
             fprintf(stderr, "Weird opcode size %i\n", opcode.size);

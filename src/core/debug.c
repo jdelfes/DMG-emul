@@ -7,7 +7,7 @@
 #include "definitions.h"
 #include "debug.h"
 
-void print_debug(struct Context *this, int failure) {
+void print_debug(const struct Context *this, int failure) {
     fprintf(stderr, "---------------\n");
     fprintf(stderr, "PC: %04x  SP: %04x\n", this->cpu.registers.PC, this->cpu.registers.SP);
     fprintf(stderr, "AF: %04x  BC: %04x\n", this->cpu.registers.AF, this->cpu.registers.BC);

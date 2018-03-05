@@ -55,7 +55,7 @@ void bit6_func(struct Context *this, struct Byte value);
 void bit7_func(struct Context *this, struct Byte value);
 
 uint8_t parse_cb(struct Context *this) {
-    uint8_t cb_opcode = code_ptr_resolve(this, this->cpu.registers.PC++)[0];
+    uint8_t cb_opcode = get_mem_u8(this, this->cpu.registers.PC++);
     struct Byte temp_u8;
 
     switch (cb_opcode) {

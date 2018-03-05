@@ -13,7 +13,6 @@ struct Opcode {
 
 extern uint8_t OpcodesTiming[0x100];
 
-uint8_t* code_ptr_resolve(struct Context *this, uint16_t address);
 struct Opcode next_opcode(struct Context *this);
 
 #endif /* opcodes_h */

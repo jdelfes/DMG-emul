@@ -32,7 +32,6 @@ int main(int argc, const char * argv[]) {
         return 1;
     }
 
-    video_init();
     return load_and_run(argv[1], argc > 2 ? argv[2] : NULL);
 }
 
@@ -48,10 +47,7 @@ int load_and_run(const char *filename, const char *bios_filename) {
         exit(EXIT_FAILURE);
     }
 
-    if (this.rom_size > 0x4000) {
-        this.rom_extra_bank = this.rom_data + 0x4000;
-    }
-
+    printf("Flags CGB: 0x%02x  SGB: 0x%02x\n", this.rom_header->cgb_flag, this.rom_header->sgb_flag);
     printf("License code: 0x%02x 0x%02x\n",
            this.rom_header->license_code[0],
            this.rom_header->license_code[1]);
@@ -60,7 +56,15 @@ int load_and_run(const char *filename, const char *bios_filename) {
     printf("ROM Size: 0x%02x\n", this.rom_header->rom_size);
     printf("RAM Size: 0x%02x\n", this.rom_header->ram_size);
     printf("Destination Code: 0x%02x\n", this.rom_header->destination_code);
-    printf("License Code: 0x%02x\n", this.rom_header->old_license_code);
+    if (this.rom_header->old_license_code == 0x33) {
+        printf("License Code: 0x%c%c (new)\n", this.rom_header->license_code[0],
+               this.rom_header->license_code[1]);
+    } else {
+        printf("License Code: 0x%02x\n", this.rom_header->old_license_code);
+    }
+
+    video_init();
+    mbc_init(&this);
 
     if (bios_filename) {
         this.bios_rom = map_file(bios_filename, NULL);

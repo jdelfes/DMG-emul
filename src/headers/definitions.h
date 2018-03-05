@@ -5,13 +5,20 @@
 
 #include "cpu.h"
 #include "video.h"
+#include "mbc.h"
 
 struct __attribute__((packed)) ROM_HEADER {
     uint8_t _[0x100];
     uint8_t entry_point[4];
     uint8_t logo[0x30];
-    char title[0x10];
-//    uint8_t cgb_flag;
+    union {
+        char title[0x10];
+        struct {
+            uint8_t __[11];
+            uint8_t manufacturer_code[4];
+            uint8_t cgb_flag;
+        };
+    };
     uint8_t license_code[2];
     uint8_t sgb_flag;
     uint8_t catridge_type;
@@ -47,10 +54,10 @@ struct Context {
         uint8_t *rom_data;
         struct ROM_HEADER *rom_header;
     };
-    uint8_t *rom_extra_bank;
     uint64_t cpu_timing;
     struct CPU cpu;
     bool cpu_halted;
+    struct MBC mbc;
     struct {
         bool IME;
         union {
@@ -122,7 +129,6 @@ struct Context {
         uint8_t JOYP;
     } joypad;
     uint8_t vram[0x2000]; // 8000-9FFF   8KB Video RAM (VRAM) (switchable bank 0-1 in CGB Mode)
-    uint8_t eram[0x2000]; // A000-BFFF    8KB External RAM
     uint8_t wram_bank_0[0x1000]; // C000-CFFF   4KB Work RAM Bank 0 (WRAM)
     uint8_t wram_bank_1[0x1000]; // D000-DFFF   4KB Work RAM Bank 1 (WRAM)  (switchable bank 1-7 in CGB Mode)
     union {
