@@ -7,7 +7,7 @@ BUILDDIR_TARGET := build
 CFLAGS  := -O2 $(shell sdl2-config --cflags)
 LDFLAGS := $(shell sdl2-config --libs)
 
-MODULES   := headers core cpu
+MODULES   := headers core cpu snd
 SRC_DIR   := $(addprefix src/,$(MODULES))
 BUILD_DIR := $(addprefix $(BUILDDIR_TARGET)/,$(MODULES))
 

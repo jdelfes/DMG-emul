@@ -15,6 +15,7 @@ void interrupt_service(struct Context *this, uint16_t address) {
     for (int i = 0; i < 20; i += 4) {
         this->cpu_timing += 4;
         timer_check(this);
+        sound_tick(this);
     }
 }
 

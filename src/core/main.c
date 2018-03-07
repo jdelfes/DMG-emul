@@ -63,7 +63,10 @@ int load_and_run(const char *filename, const char *bios_filename) {
         printf("License Code: 0x%02x\n", this.rom_header->old_license_code);
     }
 
+    this.cpu.clock = 4 * 1024 * 1024;
+
     video_init();
+    sound_init(&this);
     mbc_init(&this);
 
     if (bios_filename) {
@@ -99,6 +102,7 @@ int run(struct Context *this) {
         for (int i = 0; i < timing; i += 4) {
             this->cpu_timing += 4;
             timer_check(this);
+            sound_tick(this);
         }
     }
 

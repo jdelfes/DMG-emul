@@ -115,7 +115,7 @@ void set_mem_u8(struct Context *this, uint16_t address, uint8_t value) {
             return;
     }
 
-    fprintf(stderr, "Weird u8 write address: %04x value(%02x)\n", address, value);
+    fprintf(stderr, "%llu Weird u8 write address: %04x value(%02x)\n", this->cpu_timing, address, value);
     print_debug(this, EXIT_FAILURE);
 }
 

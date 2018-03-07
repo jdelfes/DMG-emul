@@ -66,6 +66,7 @@ struct __attribute__((packed)) CPU {
         uint16_t SP;
         uint16_t PC;
     } registers;
+    uint32_t clock;
 };
 
 uint8_t cpu_execute(struct Context *this, const struct Opcode opcode);

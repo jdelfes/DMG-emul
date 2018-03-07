@@ -9,6 +9,7 @@
 #include "definitions.h"
 #include "memory.h"
 #include "debug.h"
+#include "sound.h"
 #include "video.h"
 
 #define VIDEO
@@ -378,6 +379,7 @@ void update_frame(struct Context *this) {
     SDL_GetWindowSize(window, &rect.w, &rect.h);
     SDL_RenderCopy(renderer, texture, NULL, &rect);
     SDL_RenderPresent(renderer);
+    snd_card_flush(this);
     memset(this->video.screen, 0xff, sizeof(this->video.screen));
 
     SDL_Event e;

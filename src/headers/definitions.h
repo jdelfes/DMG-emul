@@ -5,6 +5,7 @@
 
 #include "cpu.h"
 #include "video.h"
+#include "sound.h"
 #include "mbc.h"
 
 struct __attribute__((packed)) ROM_HEADER {
@@ -82,6 +83,7 @@ struct Context {
         } IE;
     } interrupts;
     struct Video video;
+    struct Sound sound;
     struct {
         struct {
             uint64_t last_update;
