@@ -16,6 +16,7 @@ void sound_tick(struct Context *this) {
     snd_channel01_tick(this);
     snd_channel02_tick(this);
     snd_channel03_tick(this);
+    snd_channel04_tick(this);
 
     snd_mixer_tick(this);
 
@@ -108,14 +109,26 @@ bool sound_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
                 this->sound.channel03.length_counter = 256 - this->sound.NR31;
             }
             return true;
-//        case 0xff20: // NR41 - Channel 4 Sound Length (R/W)
-//            return true;
-//        case 0xff21: // NR42 - Channel 4 Volume Envelope (R/W)
-//            return true;
-//        case 0xff22: // NR43 - Channel 4 Polynomial Counter (R/W)
-//            return true;
-//        case 0xff23: // NR44 - Channel 4 Counter/consecutive; Inital (R/W)
-//            return true;
+        case 0xff20: // NR41 - Channel 4 Sound Length (R/W)
+            this->sound.NR41.raw = value;
+            return true;
+        case 0xff21: // NR42 - Channel 4 Volume Envelope (R/W)
+            this->sound.NR42.raw = value;
+            return true;
+        case 0xff22: // NR43 - Channel 4 Polynomial Counter (R/W)
+            this->sound.NR43.raw = value;
+            return true;
+        case 0xff23: // NR44 - Channel 4 Counter/consecutive; Inital (R/W)
+            this->sound.NR44.raw = value;
+            if (value & 0x80) {
+                memset(&this->sound.channel04, 0, sizeof(this->sound.channel04));
+                this->sound.channel04.enabled = true;
+                this->sound.channel04.last_update = this->cpu_timing;
+                this->sound.channel04.lfsr.raw = ~0;
+                this->sound.channel04.length_counter = 64 - this->sound.NR41.sound_length_data;
+                this->sound.channel04.envelope_volume = this->sound.NR42.initial_envelope_volume;
+            }
+            return true;
         case 0xff24: // NR50 - Channel control / ON-OFF / Volume (R/W)
             this->sound.NR50.raw = value;
             return true;
@@ -130,6 +143,7 @@ bool sound_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
                 this->sound.channel01.enabled = false;
                 this->sound.channel02.enabled = false;
                 this->sound.channel03.enabled = false;
+                this->sound.channel04.enabled = false;
             }
             return true;
     }

@@ -4,6 +4,7 @@
 #include "snd_channel01.h"
 #include "snd_channel02.h"
 #include "snd_channel03.h"
+#include "snd_channel04.h"
 #include "snd_mixer.h"
 #include "snd_card.h"
 
@@ -98,6 +99,35 @@ struct Sound {
             uint16_t counter_consecutive_selection: 1;
         };
     } NR33_34;
+    union {
+        uint8_t raw;
+        struct {
+            uint8_t sound_length_data: 6;
+        };
+    } NR41;
+    union {
+        uint8_t raw;
+        struct {
+            uint8_t number_envelope_sweep: 3;
+            uint8_t envelope_direction: 1;
+            uint8_t initial_envelope_volume: 4;
+        };
+    } NR42;
+    union {
+        uint8_t raw;
+        struct {
+            uint8_t div_ratio_freq: 3;
+            uint8_t counter_step_width: 1;
+            uint8_t shift_clock_freq: 4;
+        };
+    } NR43;
+    union {
+        uint8_t raw;
+        struct {
+            uint8_t : 4;
+            uint8_t counter_consecutive_selection: 1;
+        };
+    } NR44;
     WavePattern wave_pattern_ram[16];
     union {
         uint8_t raw;
@@ -124,6 +154,7 @@ struct Sound {
     Channel01 channel01;
     Channel02 channel02;
     Channel03 channel03;
+    Channel04 channel04;
     Mixer mixer;
     SoundCard sound_card;
 };

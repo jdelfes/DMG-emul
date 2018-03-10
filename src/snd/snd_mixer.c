@@ -15,6 +15,9 @@ void snd_mixer_tick(struct Context *this) {
     if (this->sound.NR51.sound_3_s01) {
         value += this->sound.channel03.last_sample;
     }
+    if (this->sound.NR51.sound_4_s01) {
+        value += this->sound.channel04.last_sample;
+    }
     value *= (this->sound.NR50.sO1_output_level + 1) / 8.0;
     this->sound.mixer.last_sample_ch01 = value;
 
@@ -27,6 +30,9 @@ void snd_mixer_tick(struct Context *this) {
     }
     if (this->sound.NR51.sound_3_s02) {
         value += this->sound.channel03.last_sample;
+    }
+    if (this->sound.NR51.sound_4_s02) {
+        value += this->sound.channel04.last_sample;
     }
     value *= (this->sound.NR50.sO2_output_level + 1) / 8.0;
     this->sound.mixer.last_sample_ch02 = value;
