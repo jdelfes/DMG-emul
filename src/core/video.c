@@ -12,22 +12,19 @@
 #include "sound.h"
 #include "video.h"
 
-#define VIDEO
-#define VSYNC
-
 void render_line(struct Context *this, uint16_t line_number);
 uint8_t get_pixel_data(struct Context *this, const uint8_t *tile_data, uint8_t x, uint8_t y);
 void set_pixel(struct Context *this, uint8_t x, uint8_t y, uint8_t bit_color);
 void update_frame(struct Context *this);
 
-#ifdef VIDEO
+#ifdef ENABLE_VIDEO
 SDL_Window *window;
 SDL_Renderer *renderer;
 SDL_Texture *texture;
 #endif
 
 void video_init() {
-#ifdef VIDEO
+#ifdef ENABLE_VIDEO
     window = SDL_CreateWindow("DMG", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                               160 * 3, 144 * 3, SDL_WINDOW_SHOWN);
     if (!window) {
@@ -35,7 +32,7 @@ void video_init() {
         exit(EXIT_FAILURE);
     } else {
         renderer = SDL_CreateRenderer(window, -1,
-#ifdef VSYNC
+#ifdef ENABLE_VSYNC
                                       SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
 #else
                                       SDL_RENDERER_SOFTWARE);
@@ -372,7 +369,7 @@ void render_line(struct Context *this, uint16_t line_number) {
 }
 
 void update_frame(struct Context *this) {
-#ifdef VIDEO
+#ifdef ENABLE_VIDEO
     SDL_UpdateTexture(texture, NULL, this->video.screen, sizeof(this->video.screen[0]));
     SDL_RenderClear(renderer);
     SDL_Rect rect = {0};

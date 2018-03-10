@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+#include "flags.h"
 #include "cpu.h"
 #include "video.h"
 #include "sound.h"

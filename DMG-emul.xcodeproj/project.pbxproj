@@ -78,6 +78,7 @@
 		ADCFDE4C20537E810037D61C /* snd_channel02.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = snd_channel02.c; sourceTree = "<group>"; };
 		ADCFDE4E20537FB80037D61C /* snd_mixer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snd_mixer.h; sourceTree = "<group>"; };
 		ADCFDE4F20537FB80037D61C /* snd_mixer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = snd_mixer.c; sourceTree = "<group>"; };
+		ADCFDE512053881A0037D61C /* flags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = flags.h; sourceTree = "<group>"; };
 		ADF0F360204C8F84008A717A /* mbc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mbc.h; sourceTree = "<group>"; };
 		ADF0F361204C8F84008A717A /* mbc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mbc.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -163,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				AD4DBBB4204B92A000E12E77 /* definitions.h */,
+				ADCFDE512053881A0037D61C /* flags.h */,
 			);
 			path = headers;
 			sourceTree = "<group>";

@@ -6,10 +6,13 @@
 #include "definitions.h"
 #include "snd_card.h"
 
+#ifdef ENABLE_SOUND
 SDL_AudioDeviceID audio_dev;
 SDL_AudioSpec spec = {0};
+#endif
 
 int snd_card_init() {
+#ifdef ENABLE_SOUND
     spec.freq = 44100;
     spec.format = AUDIO_F32SYS;
     spec.channels = 2;
@@ -27,10 +30,12 @@ int snd_card_init() {
     printf("size: %i\n", spec.size);
 
     SDL_PauseAudioDevice(audio_dev, 0);
+#endif
     return 0;
 }
 
 void snd_card_tick(struct Context *this) {
+#ifdef ENABLE_SOUND
     const int buffer_positions = sizeof(this->sound.sound_card.buffer) / sizeof(this->sound.sound_card.buffer[0]);
     SoundCard *snd_card = &this->sound.sound_card;
 
@@ -49,9 +54,11 @@ void snd_card_tick(struct Context *this) {
     if (snd_card->buffer_pos >= buffer_positions) {
         snd_card_flush(this);
     }
+#endif
 }
 
 void snd_card_flush(struct Context *this) {
+#ifdef ENABLE_SOUND
     const int item_size = sizeof(this->sound.sound_card.buffer[0]);
     SoundCard *snd_card = &this->sound.sound_card;
 
@@ -63,4 +70,5 @@ void snd_card_flush(struct Context *this) {
         memset(snd_card->buffer, 0, item_size);
         snd_card->buffer_pos = 0;
     }
+#endif
 }
