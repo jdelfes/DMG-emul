@@ -8,4 +8,6 @@
 
 #define ENABLE_SOUND
 
+//#define ENABLE_SERIAL
+
 #endif /* flags_h */

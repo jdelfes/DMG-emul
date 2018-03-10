@@ -112,7 +112,7 @@ bool mbc_handle_get_u8(const struct Context *this, uint16_t address, uint8_t *re
         if (this->mbc.eram_enabled) {
             *ret_value = this->mbc.eram_ptr[address - 0xa000];
         } else {
-            fprintf(stderr, "Trying to read eRAM in disabled mode\n");
+            d_printf("Trying to read eRAM in disabled mode\n");
 #ifdef STRICT_MODE
             print_debug(this, EXIT_FAILURE);
 #else
@@ -159,7 +159,7 @@ bool mbc_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) {
         return true;
     } else if (address >= 0x6000 && address <= 0x7fff) {
         if (value > 1) {
-            fprintf(stderr, "Weird ROM/RAM mode select: %02x\n", value);
+            d_printf("Weird ROM/RAM mode select: %02x\n", value);
 #ifdef STRICT_MODE
             print_debug(this, EXIT_FAILURE);
 #endif
@@ -170,7 +170,7 @@ bool mbc_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) {
         if (this->mbc.eram_enabled) {
             this->mbc.eram_ptr[address - 0xa000] = value;
         } else {
-            fprintf(stderr, "Trying to write eRAM in disabled mode\n");
+            d_printf("Trying to write eRAM in disabled mode\n");
 #ifdef STRICT_MODE
             print_debug(this, EXIT_FAILURE);
 #endif

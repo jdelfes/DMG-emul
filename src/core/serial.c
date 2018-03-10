@@ -23,10 +23,12 @@ bool serial_handle_set_u8(struct Context *this, uint16_t address, uint8_t value)
             return true;
         case 0xff02: // SC - Serial Transfer Control (R/W)
             d_printf("SC %02x\n", value);
+#ifdef ENABLE_SERIAL
             if (value >> 7) {
                 putchar(this->serial.SB);
                 fflush(stdout);
             }
+#endif
             return true;
     }
 

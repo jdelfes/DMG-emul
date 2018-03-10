@@ -5,6 +5,7 @@
 
 #include "definitions.h"
 #include "sound.h"
+#include "debug.h"
 
 int sound_init(struct Context *this) {
     snd_card_init();
@@ -117,7 +118,7 @@ bool sound_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
 
     if (address >= 0xff30 && address <= 0xff3f) {
         // Wave Pattern RAM
-        printf("--w %04x %02x\n", address, value);
+        d_printf("--w %04x %02x\n", address, value);
         return true;
     }
 

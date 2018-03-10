@@ -49,7 +49,7 @@ uint8_t get_mem_u8(struct Context *this, uint16_t address) {
             return 0xff;
     }
 
-    fprintf(stderr, "Weird u8 read address: %04x\n", address);
+    d_printf("Weird u8 read address: %04x\n", address);
 #ifdef STRICT_MODE
     print_debug(this, EXIT_FAILURE);
 #else
@@ -119,7 +119,7 @@ void set_mem_u8(struct Context *this, uint16_t address, uint8_t value) {
             return;
     }
 
-    fprintf(stderr, "%llu Weird u8 write address: %04x value(%02x)\n", this->cpu_timing, address, value);
+    d_printf("%llu Weird u8 write address: %04x value(%02x)\n", this->cpu_timing, address, value);
 #ifdef STRICT_MODE
     print_debug(this, EXIT_FAILURE);
 #endif
