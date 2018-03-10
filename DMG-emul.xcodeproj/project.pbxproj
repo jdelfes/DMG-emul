@@ -25,6 +25,7 @@
 		ADCFDE4A20537D330037D61C /* snd_duty.c in Sources */ = {isa = PBXBuildFile; fileRef = ADCFDE4920537D330037D61C /* snd_duty.c */; };
 		ADCFDE4D20537E810037D61C /* snd_channel02.c in Sources */ = {isa = PBXBuildFile; fileRef = ADCFDE4C20537E810037D61C /* snd_channel02.c */; };
 		ADCFDE5020537FB80037D61C /* snd_mixer.c in Sources */ = {isa = PBXBuildFile; fileRef = ADCFDE4F20537FB80037D61C /* snd_mixer.c */; };
+		ADCFDE54205454FD0037D61C /* snd_channel03.c in Sources */ = {isa = PBXBuildFile; fileRef = ADCFDE53205454FD0037D61C /* snd_channel03.c */; };
 		ADF0F362204C8F84008A717A /* mbc.c in Sources */ = {isa = PBXBuildFile; fileRef = ADF0F361204C8F84008A717A /* mbc.c */; };
 /* End PBXBuildFile section */
 
@@ -79,6 +80,8 @@
 		ADCFDE4E20537FB80037D61C /* snd_mixer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snd_mixer.h; sourceTree = "<group>"; };
 		ADCFDE4F20537FB80037D61C /* snd_mixer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = snd_mixer.c; sourceTree = "<group>"; };
 		ADCFDE512053881A0037D61C /* flags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = flags.h; sourceTree = "<group>"; };
+		ADCFDE52205454FD0037D61C /* snd_channel03.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snd_channel03.h; sourceTree = "<group>"; };
+		ADCFDE53205454FD0037D61C /* snd_channel03.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = snd_channel03.c; sourceTree = "<group>"; };
 		ADF0F360204C8F84008A717A /* mbc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mbc.h; sourceTree = "<group>"; };
 		ADF0F361204C8F84008A717A /* mbc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mbc.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -178,6 +181,8 @@
 				ADCFDE4520537A320037D61C /* snd_channel01.h */,
 				ADCFDE4C20537E810037D61C /* snd_channel02.c */,
 				ADCFDE4B20537E810037D61C /* snd_channel02.h */,
+				ADCFDE53205454FD0037D61C /* snd_channel03.c */,
+				ADCFDE52205454FD0037D61C /* snd_channel03.h */,
 				ADCFDE4920537D330037D61C /* snd_duty.c */,
 				ADCFDE4820537D330037D61C /* snd_duty.h */,
 				ADCFDE4F20537FB80037D61C /* snd_mixer.c */,
@@ -256,6 +261,7 @@
 				AD4DBBB2204B929A00E12E77 /* cpu.c in Sources */,
 				AD4DBBA8204B928E00E12E77 /* main.c in Sources */,
 				ADCFDE5020537FB80037D61C /* snd_mixer.c in Sources */,
+				ADCFDE54205454FD0037D61C /* snd_channel03.c in Sources */,
 				AD4DBBB3204B929A00E12E77 /* opcodes.c in Sources */,
 				AD4DBBA7204B928E00E12E77 /* joypad.c in Sources */,
 				AD4DBBA3204B928E00E12E77 /* interrupts.c in Sources */,

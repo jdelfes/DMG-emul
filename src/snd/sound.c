@@ -15,6 +15,7 @@ int sound_init(struct Context *this) {
 void sound_tick(struct Context *this) {
     snd_channel01_tick(this);
     snd_channel02_tick(this);
+    snd_channel03_tick(this);
 
     snd_mixer_tick(this);
 
@@ -82,16 +83,31 @@ bool sound_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
                 this->sound.channel02.envelope_volume = this->sound.NR22.initial_envelope_volume;
             }
             return true;
-//        case 0xff1a: // NR30 - Channel 3 Sound on/off (R/W)
-//            return true;
-//        case 0xff1b: // NR31 - Channel 3 Sound Length
-//            return true;
-//        case 0xff1c: // NR32 - Channel 3 Select output level (R/W)
-//            return true;
-//        case 0xff1d: // NR33 - Channel 3 Frequency's lower data (W)
-//            return true;
-//        case 0xff1e: // NR34 - Channel 3 Frequency's higher data (R/W)
-//            return true;
+        case 0xff1a: // NR30 - Channel 3 Sound on/off (R/W)
+            if (value & 0x80) {
+                this->sound.channel03.enabled = true;
+            } else {
+                this->sound.channel03.enabled = false;
+            }
+            return true;
+        case 0xff1b: // NR31 - Channel 3 Sound Length
+            this->sound.NR31 = value;
+            return true;
+        case 0xff1c: // NR32 - Channel 3 Select output level (R/W)
+            this->sound.NR32.raw = value;
+            return true;
+        case 0xff1d: // NR33 - Channel 3 Frequency's lower data (W)
+            this->sound.NR33_34.NRx3_raw = value;
+            return true;
+        case 0xff1e: // NR34 - Channel 3 Frequency's higher data (R/W)
+            this->sound.NR33_34.NRx4_raw = value;
+            if (value & 0x80) {
+                memset(&this->sound.channel03, 0, sizeof(this->sound.channel03));
+                this->sound.channel03.enabled = true;
+                this->sound.channel03.last_update = this->cpu_timing;
+                this->sound.channel03.length_counter = 256 - this->sound.NR31;
+            }
+            return true;
 //        case 0xff20: // NR41 - Channel 4 Sound Length (R/W)
 //            return true;
 //        case 0xff21: // NR42 - Channel 4 Volume Envelope (R/W)
@@ -113,13 +129,14 @@ bool sound_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
             } else {
                 this->sound.channel01.enabled = false;
                 this->sound.channel02.enabled = false;
+                this->sound.channel03.enabled = false;
             }
             return true;
     }
 
     if (address >= 0xff30 && address <= 0xff3f) {
         // Wave Pattern RAM
-        d_printf("--w %04x %02x\n", address, value);
+        this->sound.wave_pattern_ram[address - 0xff30].raw = value;
         return true;
     }
 

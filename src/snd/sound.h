@@ -3,8 +3,17 @@
 
 #include "snd_channel01.h"
 #include "snd_channel02.h"
+#include "snd_channel03.h"
 #include "snd_mixer.h"
 #include "snd_card.h"
+
+typedef union {
+    uint8_t raw;
+    struct {
+        uint8_t nibble0: 4;
+        uint8_t nibble1: 4;
+    };
+} WavePattern;
 
 struct Sound {
     union {
@@ -69,6 +78,27 @@ struct Sound {
             uint16_t counter_consecutive_selection: 1;
         };
     } NR23_24;
+    uint8_t NR31;
+    union {
+        uint8_t raw;
+        struct {
+            uint8_t : 5;
+            uint8_t output_level: 2;
+        };
+    } NR32;
+    union {
+        uint16_t _;
+        struct {
+            uint8_t NRx3_raw;
+            uint8_t NRx4_raw;
+        };
+        struct {
+            uint16_t channel_freq: 11;
+            uint16_t : 3;
+            uint16_t counter_consecutive_selection: 1;
+        };
+    } NR33_34;
+    WavePattern wave_pattern_ram[16];
     union {
         uint8_t raw;
         struct {
@@ -93,6 +123,7 @@ struct Sound {
     } NR51;
     Channel01 channel01;
     Channel02 channel02;
+    Channel03 channel03;
     Mixer mixer;
     SoundCard sound_card;
 };
