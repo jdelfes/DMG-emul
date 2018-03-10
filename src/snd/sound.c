@@ -40,6 +40,7 @@ bool sound_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
             return true;
         case 0xff11: // NR11 - Channel 1 Sound length/Wave pattern duty (R/W)
             this->sound.NR11.raw = value;
+            this->sound.channel01.length_counter = 64 - this->sound.NR11.sound_length_data;
             return true;
         case 0xff12: // NR12 - Channel 1 Volume Envelope (R/W)
             this->sound.NR12.raw = value;
@@ -55,12 +56,13 @@ bool sound_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
                 memset(&this->sound.channel01, 0, sizeof(this->sound.channel01));
                 this->sound.channel01.enabled = true;
                 this->sound.channel01.last_update = this->cpu_timing;
-                this->sound.channel01.freq_timer = 0;
+                this->sound.channel01.length_counter = 64 - this->sound.NR11.sound_length_data;
                 this->sound.channel01.envelope_volume = this->sound.NR12.initial_envelope_volume;
             }
             return true;
         case 0xff16: // NR21 - Channel 2 Sound Length/Wave Pattern Duty (R/W)
             this->sound.NR21.raw = value;
+            this->sound.channel02.length_counter = 64 - this->sound.NR21.sound_length_data;
             return true;
         case 0xff17: // NR22 - Channel 2 Volume Envelope (R/W)
             this->sound.NR22.raw = value;
@@ -76,7 +78,7 @@ bool sound_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
                 memset(&this->sound.channel02, 0, sizeof(this->sound.channel02));
                 this->sound.channel02.enabled = true;
                 this->sound.channel02.last_update = this->cpu_timing;
-                this->sound.channel02.freq_timer = 0;
+                this->sound.channel02.length_counter = 64 - this->sound.NR21.sound_length_data;
                 this->sound.channel02.envelope_volume = this->sound.NR22.initial_envelope_volume;
             }
             return true;
@@ -105,7 +107,6 @@ bool sound_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
             this->sound.NR51.raw = value;
             return true;
         case 0xff26: // NR52 - Sound on/off
-//            sound_push(this);
             if (value & 0x80) {
                 memset(&this->sound.mixer, 0, sizeof(this->sound.mixer));
                 memset(&this->sound.sound_card, 0, sizeof(this->sound.sound_card));

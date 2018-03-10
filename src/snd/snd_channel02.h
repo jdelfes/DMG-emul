@@ -6,6 +6,7 @@ typedef struct {
     uint64_t last_update;
     uint64_t freq_timer;
     uint8_t duty_step;
+    uint8_t length_counter;
     uint8_t envelope_volume;
     uint8_t envelope_step;
     float last_sample;

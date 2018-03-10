@@ -36,10 +36,10 @@ void snd_channel02_tick(struct Context *this) {
             case 0:
             case 4:
                 if (this->sound.NR23_24.counter_consecutive_selection) {
-                    if (this->sound.NR21.sound_length_data > 0) {
-                        this->sound.NR21.sound_length_data--;
+                    if (channel->length_counter > 0) {
+                        channel->length_counter--;
                     } else {
-                        this->sound.NR21.sound_length_data = 0;
+                        channel->length_counter = 0;
                         channel->enabled = false;
                     }
                 }
