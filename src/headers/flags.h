@@ -8,6 +8,8 @@
 
 #define ENABLE_SOUND
 
+#define ENABLE_JOYSTICK
+
 //#define ENABLE_SERIAL
 
 #endif /* flags_h */

@@ -68,6 +68,7 @@ int load_and_run(const char *filename, const char *bios_filename) {
     video_init();
     sound_init(&this);
     mbc_init(&this);
+    joypad_init();
 
     if (bios_filename) {
         this.bios_rom = map_file(bios_filename, NULL);
