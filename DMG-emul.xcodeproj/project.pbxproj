@@ -27,6 +27,7 @@
 		ADCFDE5020537FB80037D61C /* snd_mixer.c in Sources */ = {isa = PBXBuildFile; fileRef = ADCFDE4F20537FB80037D61C /* snd_mixer.c */; };
 		ADCFDE54205454FD0037D61C /* snd_channel03.c in Sources */ = {isa = PBXBuildFile; fileRef = ADCFDE53205454FD0037D61C /* snd_channel03.c */; };
 		ADCFDE57205461C10037D61C /* snd_channel04.c in Sources */ = {isa = PBXBuildFile; fileRef = ADCFDE56205461C10037D61C /* snd_channel04.c */; };
+		ADD00CAC205587C0002621D2 /* snd_envelope.c in Sources */ = {isa = PBXBuildFile; fileRef = ADD00CAB205587C0002621D2 /* snd_envelope.c */; };
 		ADF0F362204C8F84008A717A /* mbc.c in Sources */ = {isa = PBXBuildFile; fileRef = ADF0F361204C8F84008A717A /* mbc.c */; };
 /* End PBXBuildFile section */
 
@@ -85,6 +86,8 @@
 		ADCFDE53205454FD0037D61C /* snd_channel03.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = snd_channel03.c; sourceTree = "<group>"; };
 		ADCFDE55205461C10037D61C /* snd_channel04.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snd_channel04.h; sourceTree = "<group>"; };
 		ADCFDE56205461C10037D61C /* snd_channel04.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = snd_channel04.c; sourceTree = "<group>"; };
+		ADD00CAA205587C0002621D2 /* snd_envelope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snd_envelope.h; sourceTree = "<group>"; };
+		ADD00CAB205587C0002621D2 /* snd_envelope.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = snd_envelope.c; sourceTree = "<group>"; };
 		ADF0F360204C8F84008A717A /* mbc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mbc.h; sourceTree = "<group>"; };
 		ADF0F361204C8F84008A717A /* mbc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mbc.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -190,6 +193,8 @@
 				ADCFDE55205461C10037D61C /* snd_channel04.h */,
 				ADCFDE4920537D330037D61C /* snd_duty.c */,
 				ADCFDE4820537D330037D61C /* snd_duty.h */,
+				ADD00CAB205587C0002621D2 /* snd_envelope.c */,
+				ADD00CAA205587C0002621D2 /* snd_envelope.h */,
 				ADCFDE4F20537FB80037D61C /* snd_mixer.c */,
 				ADCFDE4E20537FB80037D61C /* snd_mixer.h */,
 				AD4DBB99204B928E00E12E77 /* sound.c */,
@@ -275,6 +280,7 @@
 				AD4DBBB1204B929A00E12E77 /* cb_prefix.c in Sources */,
 				ADCFDE4720537A320037D61C /* snd_channel01.c in Sources */,
 				AD4DBBA2204B928E00E12E77 /* video.c in Sources */,
+				ADD00CAC205587C0002621D2 /* snd_envelope.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

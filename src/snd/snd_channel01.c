@@ -4,33 +4,11 @@
 
 #include "definitions.h"
 #include "snd_duty.h"
+#include "snd_envelope.h"
 #include "snd_channel01.h"
 
-void snd_channel01_tick(struct Context *this) {
+static void frame(struct Context *this, uint64_t previous_frame_step) {
     Channel01 *channel = &this->sound.channel01;
-    if (!channel->enabled) {
-        channel->last_sample = 0;
-        return;
-    }
-
-    uint64_t diff = this->cpu_timing - channel->last_update;
-    channel->last_update = this->cpu_timing;
-    uint64_t previous_frame_step = channel->frame.step;
-    channel->frame.timer += diff;
-    channel->freq_timer += diff;
-
-    const uint64_t freq_period = (2048 - this->sound.NR13_14.channel_freq) * 4;
-    if (channel->freq_timer >= freq_period) {
-        channel->freq_timer -= freq_period;
-
-        channel->duty_step++;
-        if (channel->duty_step >= 8) {
-            channel->duty_step = 0;
-        }
-    }
-
-    float value = snd_duty_value(this->sound.NR11.wave_pattern_duty, channel->duty_step);
-
     if (previous_frame_step != channel->frame.step) {
         switch (channel->frame.step) {
             case 2:
@@ -83,16 +61,47 @@ void snd_channel01_tick(struct Context *this) {
                             }
                         }
                     }
-                } else {
-//                    channel->envelope_volume = 15;
                 }
                 break;
             default:
                 break;
         }
     }
+}
 
-    value *= channel->envelope_volume / 15.0;
+static void duty_tick(struct Context *this) {
+    Channel01 *channel = &this->sound.channel01;
+    const uint64_t freq_period = (2048 - this->sound.NR13_14.channel_freq) * 4;
+    while (channel->freq_timer >= freq_period) {
+        channel->freq_timer -= freq_period;
+
+        channel->duty_step++;
+        if (channel->duty_step >= 8) {
+            channel->duty_step = 0;
+        }
+    }
+}
+
+void snd_channel01_tick(struct Context *this) {
+    Channel01 *channel = &this->sound.channel01;
+    if (!channel->enabled) {
+        channel->last_sample = 0;
+        return;
+    }
+
+    uint64_t diff = this->cpu_timing - channel->last_update;
+    channel->last_update = this->cpu_timing;
+    uint64_t previous_frame_step = channel->frame.step;
+    channel->frame.timer += diff;
+    channel->freq_timer += diff;
+
+    duty_tick(this);
+
+    float value = snd_duty_value(this->sound.NR11.wave_pattern_duty, channel->duty_step);
+
+    frame(this, previous_frame_step);
+
+    value *= snd_envelope_output_level_mult(channel->envelope_volume);
 
     channel->last_sample = value;
 }
