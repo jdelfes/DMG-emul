@@ -13,7 +13,7 @@ struct __attribute__((packed)) Pixel {
     };
 };
 
-struct Video {
+struct __attribute__((packed)) Video {
     uint64_t last_cpu_timing;
     uint64_t timing;
     struct Pixel screen[144][160];
@@ -47,7 +47,7 @@ struct Video {
     uint8_t LYC;
     union {
         uint8_t raw;
-        union {
+        struct {
             uint8_t shade_color_number0: 2;
             uint8_t shade_color_number1: 2;
             uint8_t shade_color_number2: 2;
@@ -56,7 +56,7 @@ struct Video {
     } BGP;
     union {
         uint8_t raw;
-        union {
+        struct {
             uint8_t : 2;
             uint8_t shade_color_number1: 2;
             uint8_t shade_color_number2: 2;
@@ -65,7 +65,7 @@ struct Video {
     } OBP0;
     union {
         uint8_t raw;
-        union {
+        struct {
             uint8_t : 2;
             uint8_t shade_color_number1: 2;
             uint8_t shade_color_number2: 2;
