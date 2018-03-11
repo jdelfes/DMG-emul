@@ -227,10 +227,12 @@ void video_check(struct Context *this) {
 }
 
 uint8_t get_pixel_data(struct Context *this,const uint8_t *tile_data, uint8_t x, uint8_t y) {
+#ifdef ENABLE_STRICT
     if (x >= 8 || y >= (this->video.LCDC.obj_size ? 16 : 8)) {
         fprintf(stderr, "wrong pixel pos %i x %i\n", x, y);
         exit(EXIT_FAILURE);
     }
+#endif
     uint8_t pixel_data0 = tile_data[y * 2];
     uint8_t pixel_data1 = tile_data[y * 2 + 1];
     return ((pixel_data0 & (0x80 >> x)) ? 1 : 0) |

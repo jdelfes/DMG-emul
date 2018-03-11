@@ -75,16 +75,6 @@ void joypad_check(struct Context *this) {
     this->joypad.keys.buttonB = SDL_JoystickGetButton(joy, 0) ? 1 : 0;
     this->joypad.keys.select  = (SDL_JoystickGetButton(joy, 6) || SDL_JoystickGetButton(joy, 9) ) ? 1 : 0;
     this->joypad.keys.start   = (SDL_JoystickGetButton(joy, 7) || SDL_JoystickGetButton(joy, 8) ) ? 1 : 0;
-
-//    bool found = false;
-//    for (int i = 0; i < SDL_JoystickNumButtons(joy); i++) {
-//        if (SDL_JoystickGetButton(joy, i)) {
-//            printf("%i\t", i);
-//            found = true;
-//        }
-//    }
-//    if (found)
-//        printf("\n");
 #else
     const Uint8 *state = SDL_GetKeyboardState(NULL);
 
