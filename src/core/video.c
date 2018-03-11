@@ -241,10 +241,11 @@ uint8_t get_pixel_data(struct Context *this,const uint8_t *tile_data, uint8_t x,
 
 void set_pixel(struct Context *this, uint8_t x, uint8_t y, uint8_t bit_color) {
     uint8_t gray_level = 0xff - (bit_color * 85);
-    this->video.screen[y][x].a = 0xff;
-    this->video.screen[y][x].r = gray_level;
-    this->video.screen[y][x].g = gray_level;
-    this->video.screen[y][x].b = gray_level;
+    struct Pixel *pixel = &this->video.screen[y][x];
+    pixel->a = 0xff;
+    pixel->r = gray_level;
+    pixel->g = gray_level;
+    pixel->b = gray_level;
 }
 
 void render_line(struct Context *this, uint16_t line_number) {
@@ -255,23 +256,35 @@ void render_line(struct Context *this, uint16_t line_number) {
             (this->video.LCDC.bg_tile_map_display_select ? 0x1c00 : 0x1800);
         uint8_t *tile_data = this->vram +
             (this->video.LCDC.bg_window_tile_data_select ? 0x0000 : 0x0800);
-        uint8_t tile_y = pos_y / 8;
-        uint8_t tile_pixel_y = pos_y % 8;
+        uint8_t tile_y = pos_y >> 3;
+        uint8_t tile_pixel_y = pos_y & 7;
         for (uint8_t x = 0; x < 160; x++) {
             uint8_t pos_x = x + this->video.SCX;
-            uint8_t tile_x = pos_x / 8;
-            uint8_t tile_pixel_x = pos_x % 8;
+            uint8_t tile_x = pos_x >> 3;
+            uint8_t tile_pixel_x = pos_x & 7;
 
             uint8_t tile_number = bg_tile_map[(tile_y * 32) + tile_x];
             if (!this->video.LCDC.bg_window_tile_data_select) {
                 tile_number += 128;
             }
             uint8_t *selected_tile_data = tile_data + (tile_number * 16); // 2 bytes per row, 8x8 pixels
-            uint8_t pixel_data = get_pixel_data(this, selected_tile_data, tile_pixel_x, tile_pixel_y);
+            uint8_t offs_x = 0;
+            for (uint8_t px = tile_pixel_x; px < 8; px++) {
+                uint8_t pixel_data = get_pixel_data(this, selected_tile_data, px, tile_pixel_y);
+                switch (pixel_data) {
+                    case 0: pixel_data = this->video.BGP.shade_color_number0; break;
+                    case 1: pixel_data = this->video.BGP.shade_color_number1; break;
+                    case 2: pixel_data = this->video.BGP.shade_color_number2; break;
+                    case 3: pixel_data = this->video.BGP.shade_color_number3; break;
+                    default: exit(EXIT_FAILURE);
+                };
+                set_pixel(this, x + offs_x, line_number, pixel_data);
 
-            pixel_data = (this->video.BGP.raw >> (pixel_data * 2)) & 0x03;
-
-            set_pixel(this, x, line_number, pixel_data);
+                offs_x++;
+                if ((x + offs_x) == 160)
+                    break;
+            }
+            x += offs_x - 1;
         }
     }
 
@@ -282,13 +295,13 @@ void render_line(struct Context *this, uint16_t line_number) {
             (this->video.LCDC.window_tile_map_display_select ? 0x1c00 : 0x1800);
         uint8_t *tile_data = this->vram +
             (this->video.LCDC.bg_window_tile_data_select ? 0x0000 : 0x0800);
-        uint8_t tile_y = pos_y / 8;
-        uint8_t tile_pixel_y = pos_y % 8;
+        uint8_t tile_y = pos_y >> 3;
+        uint8_t tile_pixel_y = pos_y & 7;
         uint8_t min_x = this->video.WX >= 7 ? this->video.WX - 7 : 0;
         for (uint8_t x = min_x; x < 160; x++) {
             uint8_t pos_x = x - this->video.WX + 7;
-            uint8_t tile_x = pos_x / 8;
-            uint8_t tile_pixel_x = pos_x % 8;
+            uint8_t tile_x = pos_x >> 3;
+            uint8_t tile_pixel_x = pos_x & 7;
 
             uint8_t tile_number = window_tile_map[(tile_y * 32) + tile_x];
             if (!this->video.LCDC.bg_window_tile_data_select) {
