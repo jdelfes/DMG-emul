@@ -12,10 +12,10 @@
 #include "sound.h"
 #include "video.h"
 
-void render_line(struct Context *this, uint16_t line_number);
-uint8_t get_pixel_data(struct Context *this, const uint8_t *tile_data, uint8_t x, uint8_t y);
-void set_pixel(struct Context *this, uint8_t x, uint8_t y, uint8_t bit_color);
-void update_frame(struct Context *this);
+static void render_line(struct Context *this, uint16_t line_number);
+static uint8_t get_pixel_data(struct Context *this, const uint8_t *tile_data, uint8_t x, uint8_t y);
+static void set_pixel(struct Context *this, uint8_t x, uint8_t y, uint8_t bit_color);
+static void update_frame(struct Context *this);
 
 #ifdef ENABLE_VIDEO
 SDL_Window *window;
@@ -165,68 +165,72 @@ bool video_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
 }
 
 void video_check(struct Context *this) {
-    if (this->video.LCDC.lcd_display_enable) {
-        this->video.timing += this->cpu_timing - this->video.last_cpu_timing;
-        this->video.last_cpu_timing = this->cpu_timing;
+    if (!this->video.LCDC.lcd_display_enable) {
+        this->video.LY = 0;
+        this->video.STAT.mode_flag = 0;
+        return;
+    }
 
-        uint16_t needed;
-        switch (this->video.STAT.mode_flag) {
-            case 0: // 204 - hblank
-                needed = 204;
-                break;
+    this->video.timing += this->cpu_timing - this->video.last_cpu_timing;
+    this->video.last_cpu_timing = this->cpu_timing;
+
+    uint16_t needed;
+    switch (this->video.STAT.mode_flag) {
+        case 0: // 204 - hblank
+            needed = 204;
+            break;
 //            case 1: // 4560 - vblank
 //                break;
-            case 2: // 80 - oam
-                needed = 80;
-                break;
-            case 3: // 172 - vram
-                needed = 172;
-                break;
-            default:
-                exit(EXIT_FAILURE);
-        }
+        case 2: // 80 - oam
+            needed = 80;
+            break;
+        case 3: // 172 - vram
+            needed = 172;
+            break;
+        default:
+            exit(EXIT_FAILURE);
+    }
 
-        if (this->video.timing >= needed) {
-            this->video.timing -= needed;
-            switch (this->video.STAT.mode_flag) {
-                case 0: // 204 - hblank to oam
-                    this->video.STAT.mode_flag = 2;
-                    this->video.LY++;
-                    if (this->video.LY == 144) {
-                        this->interrupts.IF.v_blank = 1;
-                        if (this->video.STAT.mode_1_v_blank_interrupt) {
-                            this->interrupts.IF.lcd_stat = 1;
-                        }
-                    }
-                    if (this->video.STAT.mode_2_oam_interrupt) {
+    if (this->video.timing >= needed) {
+        this->video.timing -= needed;
+        switch (this->video.STAT.mode_flag) {
+            case 0: // 204 - hblank to oam
+                this->video.STAT.mode_flag = 2;
+                this->video.LY++;
+                if (this->video.LY == 144) {
+                    this->interrupts.IF.v_blank = 1;
+                    if (this->video.STAT.mode_1_v_blank_interrupt) {
                         this->interrupts.IF.lcd_stat = 1;
                     }
-                    if (this->video.LY == 154) {
-                        this->video.LY = 0;
-                    }
-                    if (this->video.STAT.lyc_ly_coincidence_interrupt &&
-                        this->video.LYC == this->video.LY) {
-                        this->interrupts.IF.lcd_stat = 1;
-                    }
-                    break;
-                case 2: // 80 - oam to vram
-                    this->video.STAT.mode_flag = 3;
-                    if (this->video.LY < 144) {
-                        render_line(this, this->video.LY);
-                    }
-                    break;
-                case 3: // 172 - vram to hblank
-                    this->video.STAT.mode_flag = 0;
-                    if (this->video.STAT.mode_0_h_blank_interrupt) {
-                        this->interrupts.IF.lcd_stat = 1;
-                    }
-                    break;
-            }
+                }
+                if (this->video.STAT.mode_2_oam_interrupt) {
+                    this->interrupts.IF.lcd_stat = 1;
+                }
+                if (this->video.LY == 154) {
+                    this->video.LY = 0;
+                }
+                if (this->video.STAT.lyc_ly_coincidence_interrupt &&
+                    this->video.LYC == this->video.LY) {
+                    this->interrupts.IF.lcd_stat = 1;
+                }
+                break;
+            case 2: // 80 - oam to vram
+                this->video.STAT.mode_flag = 3;
+                if (this->video.LY < 144) {
+                    render_line(this, this->video.LY);
+                }
+                break;
+            case 3: // 172 - vram to hblank
+                this->video.STAT.mode_flag = 0;
+                if (this->video.STAT.mode_0_h_blank_interrupt) {
+                    this->interrupts.IF.lcd_stat = 1;
+                }
+                break;
         }
     }
 }
 
-uint8_t get_pixel_data(struct Context *this,const uint8_t *tile_data, uint8_t x, uint8_t y) {
+static uint8_t get_pixel_data(struct Context *this,const uint8_t *tile_data, uint8_t x, uint8_t y) {
 #ifdef ENABLE_STRICT
     if (x >= 8 || y >= (this->video.LCDC.obj_size ? 16 : 8)) {
         fprintf(stderr, "wrong pixel pos %i x %i\n", x, y);
@@ -239,7 +243,7 @@ uint8_t get_pixel_data(struct Context *this,const uint8_t *tile_data, uint8_t x,
         ((pixel_data1 & (0x80 >> x)) ? 2 : 0);
 }
 
-void set_pixel(struct Context *this, uint8_t x, uint8_t y, uint8_t bit_color) {
+static void set_pixel(struct Context *this, uint8_t x, uint8_t y, uint8_t bit_color) {
     uint8_t gray_level = 0xff - (bit_color * 85);
     this->video.screen[y][x].a = 0xff;
     this->video.screen[y][x].r = gray_level;
@@ -247,7 +251,7 @@ void set_pixel(struct Context *this, uint8_t x, uint8_t y, uint8_t bit_color) {
     this->video.screen[y][x].b = gray_level;
 }
 
-void render_line(struct Context *this, uint16_t line_number) {
+static void render_line(struct Context *this, uint16_t line_number) {
     // render background
     if (this->video.LCDC.bg_window_display_priority) {
         uint8_t pos_y = line_number + this->video.SCY;
@@ -370,7 +374,7 @@ void render_line(struct Context *this, uint16_t line_number) {
     }
 }
 
-void update_frame(struct Context *this) {
+static void update_frame(struct Context *this) {
 #ifdef ENABLE_VIDEO
     SDL_UpdateTexture(texture, NULL, this->video.screen, sizeof(this->video.screen[0]));
     SDL_RenderClear(renderer);
