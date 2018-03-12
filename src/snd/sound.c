@@ -138,7 +138,6 @@ bool sound_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
         case 0xff26: // NR52 - Sound on/off
             if (value & 0x80) {
                 memset(&this->sound.mixer, 0, sizeof(this->sound.mixer));
-                memset(&this->sound.sound_card, 0, sizeof(this->sound.sound_card));
             } else {
                 this->sound.channel01.enabled = false;
                 this->sound.channel02.enabled = false;
