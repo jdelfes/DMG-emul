@@ -5,6 +5,7 @@
 
 #include "flags.h"
 #include "cpu.h"
+#include "interrupts.h"
 #include "video.h"
 #include "sound.h"
 #include "mbc.h"
@@ -60,29 +61,7 @@ struct Context {
     struct CPU cpu;
     bool cpu_halted;
     struct MBC mbc;
-    struct {
-        bool IME;
-        union {
-            uint8_t raw;
-            struct {
-                uint8_t v_blank: 1;
-                uint8_t lcd_stat: 1;
-                uint8_t timer: 1;
-                uint8_t serial: 1;
-                uint8_t joypad: 1;
-            };
-        } IF;
-        union {
-            uint8_t raw;
-            struct {
-                uint8_t v_blank: 1;
-                uint8_t lcd_stat: 1;
-                uint8_t timer: 1;
-                uint8_t serial: 1;
-                uint8_t joypad: 1;
-            };
-        } IE;
-    } interrupts;
+    Interrupts interrupts;
     struct Video video;
     struct Sound sound;
     struct {

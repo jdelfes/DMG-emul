@@ -47,7 +47,8 @@ bool interrupts_handle_set_u8(struct Context *this, uint16_t address, uint8_t va
 }
 
 void interrupts_check(struct Context *this) {
-    if (this->interrupts.IME) {
+    if (this->interrupts.IME && this->interrupts.interrupt_happened) {
+        this->interrupts.interrupt_happened = false;
         if (this->interrupts.IE.v_blank && this->interrupts.IF.v_blank) {
             d_printf("vblank int\n");
             this->interrupts.IF.v_blank = 0;
@@ -69,6 +70,11 @@ void interrupts_check(struct Context *this) {
             this->interrupts.IF.joypad = 0;
             interrupt_service(this, 0x0060);
         }
+        return;
+    }
+
+    if (this->interrupts.IME) {
+        this->interrupts.interrupt_happened = (this->interrupts.IE.raw & this->interrupts.IF.raw) ? true : false;
     } else if (this->cpu_halted && (this->interrupts.IE.raw & this->interrupts.IF.raw & 0x1f)) {
         this->cpu_halted = false;
     }
