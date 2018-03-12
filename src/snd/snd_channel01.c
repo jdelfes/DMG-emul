@@ -44,14 +44,14 @@ void snd_channel01_tick(struct Context *this) {
                     uint16_t freq = this->sound.NR13_14.channel_freq;
                     freq >>= this->sound.NR10.sweep_shift;
                     if (this->sound.NR10.sweep_direction) {
+                        if (this->sound.NR13_14.channel_freq > freq) {
+                            freq = this->sound.NR13_14.channel_freq - freq;
+                        }
+                    } else {
                         freq = this->sound.NR13_14.channel_freq + freq;
                         if (freq > 2047) {
                             channel->enabled = false;
                             freq = 2047;
-                        }
-                    } else {
-                        if (this->sound.NR13_14.channel_freq > freq) {
-                            freq = this->sound.NR13_14.channel_freq - freq;
                         }
                     }
                     this->sound.NR13_14.channel_freq = freq;
