@@ -471,6 +471,10 @@ uint8_t cpu_execute(struct Context *this, const struct Opcode opcode) {
             break;
         case 0x76: // HALT
             this->cpu_halted = true;
+            if ((this->interrupts.IE.raw & 0x1f) == 0) {
+                fprintf(stderr, "CPU halted but no interrupts are enabled!\n");
+                print_debug(this, EXIT_FAILURE);
+            }
             break;
         case 0x77: // LD (HL),A
             set_mem_u8(this, this->cpu.registers.HL, this->cpu.registers.A.byte);
