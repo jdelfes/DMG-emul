@@ -35,8 +35,8 @@ void joypad_init() {
 bool joypad_handle_get_u8(struct Context *this, uint16_t address, uint8_t *ret_value) {
     switch (address) {
         case 0xff00: // P1/JOYP - Joypad (R/W)
-            *ret_value = ((this->joypad.JOYP & 0x20) ? 0 : (~this->joypad.keys.buttons & 0x0f)) |
-                ((this->joypad.JOYP & 0x10) ? 0 : (~this->joypad.keys.directions & 0x0f)) |
+            *ret_value = (this->joypad.JOYP.select_button_keys ? 0 : (~this->joypad.keys.buttons & 0x0f)) |
+                (this->joypad.JOYP.select_direction_keys ? 0 : (~this->joypad.keys.directions & 0x0f)) |
                 0xc0;
             return true;
     }
@@ -47,7 +47,7 @@ bool joypad_handle_set_u8(struct Context *this, uint16_t address, uint8_t value)
     switch (address) {
         case 0xff00: // P1/JOYP - Joypad (R/W)
             d_printf("JOYP: %02x\n", value);
-            this->joypad.JOYP = (value & 0xf0) | (this->joypad.JOYP & 0x0f);
+            this->joypad.JOYP.raw = (value & 0xf0) | this->joypad.JOYP.keys;
             return true;
     }
 
@@ -88,7 +88,12 @@ void joypad_check(struct Context *this) {
     this->joypad.keys.start = state[SDL_SCANCODE_2] ? 1 : 0;
 #endif
 
-    if (previous != this->joypad.keys.raw) {
+    uint8_t diff = previous ^ this->joypad.keys.raw;
+    // TODO not sure if we should select based on JOYP
+    if (!this->joypad.JOYP.select_button_keys && (diff & 0x0f)) {
+        this->interrupts.IF.joypad = 1;
+    }
+    if (!this->joypad.JOYP.select_direction_keys && (diff & 0xf0)) {
         this->interrupts.IF.joypad = 1;
     }
 }

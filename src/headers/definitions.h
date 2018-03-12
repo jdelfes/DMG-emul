@@ -9,6 +9,7 @@
 #include "interrupts.h"
 #include "video.h"
 #include "sound.h"
+#include "joypad.h"
 #include "mbc.h"
 
 struct __attribute__((packed)) ROM_HEADER {
@@ -66,6 +67,7 @@ struct Context {
     struct Video video;
     struct Sound sound;
     Timer timer;
+    Joypad joypad;
     uint8_t vram[0x2000]; // 8000-9FFF   8KB Video RAM (VRAM) (switchable bank 0-1 in CGB Mode)
     uint8_t wram_bank_0[0x1000]; // C000-CFFF   4KB Work RAM Bank 0 (WRAM)
     uint8_t wram_bank_1[0x1000]; // D000-DFFF   4KB Work RAM Bank 1 (WRAM)  (switchable bank 1-7 in CGB Mode)
