@@ -9,6 +9,7 @@
 #include "interrupts.h"
 #include "video.h"
 #include "sound.h"
+#include "serial.h"
 #include "joypad.h"
 #include "mbc.h"
 
@@ -67,6 +68,7 @@ struct Context {
     struct Video video;
     struct Sound sound;
     Timer timer;
+    Serial serial;
     Joypad joypad;
     uint8_t vram[0x2000]; // 8000-9FFF   8KB Video RAM (VRAM) (switchable bank 0-1 in CGB Mode)
     uint8_t wram_bank_0[0x1000]; // C000-CFFF   4KB Work RAM Bank 0 (WRAM)

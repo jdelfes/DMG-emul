@@ -82,6 +82,7 @@ int load_and_run(const char *filename, const char *bios_filename) {
 int run(struct Context *this) {
     while (1) {
         video_check(this);
+        serial_tick(this);
         joypad_check(this);
         interrupts_check(this);
 
