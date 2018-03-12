@@ -36,8 +36,8 @@ int snd_card_init() {
 
 void snd_card_tick(struct Context *this) {
 #ifdef ENABLE_SOUND
-    const int buffer_positions = sizeof(this->sound.sound_card.buffer) / sizeof(this->sound.sound_card.buffer[0]);
     SoundCard *snd_card = &this->sound.sound_card;
+    const int buffer_positions = sizeof(snd_card->buffer) / sizeof(snd_card->buffer[0]);
 
     uint64_t diff = this->cpu_timing - snd_card->last_update;
     snd_card->last_update = this->cpu_timing;

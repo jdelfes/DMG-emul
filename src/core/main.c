@@ -121,25 +121,23 @@ void dmg_init(struct Context *this) {
     //set_mem_u8(this, 0xFF05, 0x00); // TIMA
     //set_mem_u8(this, 0xFF06, 0x00); // TMA
     //set_mem_u8(this, 0xFF07, 0x00); // TAC
-#ifdef SOUND // TODO enable this when sound is implemented
     set_mem_u8(this, 0xFF10, 0x80); // NR10
     set_mem_u8(this, 0xFF11, 0xBF); // NR11
     set_mem_u8(this, 0xFF12, 0xF3); // NR12
     set_mem_u8(this, 0xFF14, 0xBF); // NR14
     set_mem_u8(this, 0xFF16, 0x3F); // NR21
-    set_mem_u8(this, 0xFF17, 0x00); // NR22
+    //set_mem_u8(this, 0xFF17, 0x00); // NR22
     set_mem_u8(this, 0xFF19, 0xBF); // NR24
     set_mem_u8(this, 0xFF1A, 0x7F); // NR30
     set_mem_u8(this, 0xFF1B, 0xFF); // NR31
     set_mem_u8(this, 0xFF1C, 0x9F); // NR32
     set_mem_u8(this, 0xFF1E, 0xBF); // NR33
     set_mem_u8(this, 0xFF20, 0xFF); // NR41
-    set_mem_u8(this, 0xFF21, 0x00); // NR42
-    set_mem_u8(this, 0xFF22, 0x00); // NR43
+    //set_mem_u8(this, 0xFF21, 0x00); // NR42
+    //set_mem_u8(this, 0xFF22, 0x00); // NR43
     set_mem_u8(this, 0xFF23, 0xBF); // NR30
     set_mem_u8(this, 0xFF24, 0x77); // NR50
     set_mem_u8(this, 0xFF25, 0xF3); // NR51
-#endif
     set_mem_u8(this, 0xFF26, 0xF1); // $F1-GB, $F0-SGB ; NR52
     set_mem_u8(this, 0xFF40, 0x91); // LCDC
     //set_mem_u8(this, 0xFF42, 0x00); // SCY

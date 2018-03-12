@@ -24,14 +24,51 @@ void sound_tick(struct Context *this) {
 }
 
 bool sound_handle_get_u8(struct Context *this, uint16_t address, uint8_t *ret_value) {
-//    switch (address) {
-//        case 0xff25: // NR51 - Selection of Sound output terminal (R/W)
-//            *ret_value = 0xff;
-//            return true;
-//        case 0xff26: // NR52 - Sound on/off
-//            *ret_value = this->sound.NR52.raw;
-//            return true;
-//    }
+    switch (address) {
+        case 0xff11: // NR11 - Channel 1 Sound length/Wave pattern duty (R/W)
+            *ret_value = this->sound.NR11.raw | 0x3f;
+            return true;
+        case 0xff12: // NR12 - Channel 1 Volume Envelope (R/W)
+            *ret_value = this->sound.NR12.raw;
+            return true;
+        case 0xff14: // NR14 - Channel 1 Frequency hi (R/W)
+            *ret_value = this->sound.NR13_14.NRx4_raw | 0xbf;
+            return true;
+        case 0xff16: // NR21 - Channel 2 Sound Length/Wave Pattern Duty (R/W)
+            *ret_value = this->sound.NR21.raw | 0x3f;
+            return true;
+        case 0xff17: // NR22 - Channel 2 Volume Envelope (R/W)
+            *ret_value = this->sound.NR22.raw | 0x3f;
+            return true;
+        case 0xff19: // NR24 - Channel 2 Frequency hi data (R/W)
+            *ret_value = this->sound.NR23_24.NRx4_raw | 0xbf;
+            return true;
+        case 0xff1c: // NR32 - Channel 3 Select output level (R/W)
+            *ret_value = this->sound.NR32.raw;
+            return true;
+        case 0xff1e: // NR34 - Channel 3 Frequency's higher data (R/W)
+            *ret_value = this->sound.NR33_34.NRx4_raw | 0xbf;
+            return true;
+        case 0xff21: // NR42 - Channel 4 Volume Envelope (R/W)
+            *ret_value = this->sound.NR42.raw;
+            return true;
+        case 0xff23: // NR44 - Channel 4 Counter/consecutive; Inital (R/W)
+            *ret_value = this->sound.NR44.raw | 0xbf;
+            return true;
+        case 0xff24: // NR50 - Channel control / ON-OFF / Volume (R/W)
+            *ret_value = this->sound.NR50.raw;
+            return true;
+        case 0xff25: // NR51 - Selection of Sound output terminal (R/W)
+            *ret_value = this->sound.NR51.raw;
+            return true;
+        case 0xff26: // NR52 - Sound on/off
+            *ret_value = (this->sound.channel04.enabled ? 0x08 : 0x00)
+                | (this->sound.channel03.enabled ? 0x04 : 0x00)
+                | (this->sound.channel02.enabled ? 0x02 : 0x00)
+                | (this->sound.channel01.enabled ? 0x01 : 0x00)
+                | 0xf0;
+            return true;
+    }
     return false;
 }
 
@@ -61,6 +98,9 @@ bool sound_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
                 this->sound.channel01.length_counter = 64 - this->sound.NR11.sound_length_data;
                 this->sound.channel01.envelope_volume = this->sound.NR12.initial_envelope_volume;
             }
+            return true;
+        case 0xff15: // ??
+        case 0xff1f: // ??
             return true;
         case 0xff16: // NR21 - Channel 2 Sound Length/Wave Pattern Duty (R/W)
             this->sound.NR21.raw = value;
