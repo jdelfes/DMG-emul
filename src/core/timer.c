@@ -14,6 +14,9 @@ bool timer_handle_get_u8(struct Context *this, uint16_t address, uint8_t *ret_va
         case 0xff05: // TIMA - Timer counter (R/W)
             *ret_value = this->timer.TIMA;
             return true;
+        case 0xff06: // TMA - Timer Modulo (R/W)
+            *ret_value = this->timer.TMA;
+            return true;
         case 0xff07: // TAC - Timer Control (R/W)
             *ret_value = this->timer.TAC.raw | (~0x03);
             return true;

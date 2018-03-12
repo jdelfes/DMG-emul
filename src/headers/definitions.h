@@ -5,6 +5,7 @@
 
 #include "flags.h"
 #include "cpu.h"
+#include "timer.h"
 #include "interrupts.h"
 #include "video.h"
 #include "sound.h"
@@ -64,52 +65,7 @@ struct Context {
     Interrupts interrupts;
     struct Video video;
     struct Sound sound;
-    struct {
-        struct {
-            uint64_t last_update;
-            union {
-                struct {
-                    uint8_t _;
-                    uint8_t value;
-                };
-                uint16_t internal;
-            };
-        } DIV;
-        uint8_t TIMA;
-        union {
-            uint8_t raw;
-            struct {
-                uint8_t clock_select: 2;
-                uint8_t enable: 1;
-            };
-        } TAC;
-        uint8_t TMA;
-    } timer;
-    struct {
-        uint8_t SB;
-    } serial;
-    struct {
-        struct {
-            union {
-                uint8_t raw;
-                struct {
-                    uint8_t buttons: 4;
-                    uint8_t directions: 4;
-                };
-                struct {
-                    uint8_t buttonA: 1;
-                    uint8_t buttonB: 1;
-                    uint8_t select: 1;
-                    uint8_t start: 1;
-                    uint8_t right: 1;
-                    uint8_t left: 1;
-                    uint8_t up: 1;
-                    uint8_t down: 1;
-                };
-            };
-        } keys;
-        uint8_t JOYP;
-    } joypad;
+    Timer timer;
     uint8_t vram[0x2000]; // 8000-9FFF   8KB Video RAM (VRAM) (switchable bank 0-1 in CGB Mode)
     uint8_t wram_bank_0[0x1000]; // C000-CFFF   4KB Work RAM Bank 0 (WRAM)
     uint8_t wram_bank_1[0x1000]; // D000-DFFF   4KB Work RAM Bank 1 (WRAM)  (switchable bank 1-7 in CGB Mode)
