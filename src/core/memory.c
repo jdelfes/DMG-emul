@@ -21,6 +21,9 @@ uint8_t get_mem_u8(struct Context *this, uint16_t address) {
         return this->wram_bank_0[address - 0xc000];
     } else if (address >= 0xd000 && address <= 0xdfff) {
         return this->wram_bank_1[address - 0xd000];
+    } else if (address >= 0xe000 && address <= 0xfdff) {
+        // Mirror of C000~DDFF (ECHO RAM)
+        return get_mem_u8(this, address - 0x2000);
     } else if (address >= 0xfe00 && address <= 0xfe9f) {
         return this->oam[address - 0xfe00];
     } else if (address >= 0xff80 && address <= 0xfffe) {
