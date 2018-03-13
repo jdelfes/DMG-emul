@@ -43,6 +43,9 @@ bool sound_handle_get_u8(struct Context *this, uint16_t address, uint8_t *ret_va
         case 0xff19: // NR24 - Channel 2 Frequency hi data (R/W)
             *ret_value = this->sound.NR23_24.NRx4_raw | 0xbf;
             return true;
+        case 0xff1a: // NR30 - Channel 3 Sound on/off (R/W)
+            *ret_value = this->sound.channel03.enabled ? 0xff : 0x7f;
+            return true;
         case 0xff1c: // NR32 - Channel 3 Select output level (R/W)
             *ret_value = this->sound.NR32.raw;
             return true;
@@ -51,6 +54,9 @@ bool sound_handle_get_u8(struct Context *this, uint16_t address, uint8_t *ret_va
             return true;
         case 0xff21: // NR42 - Channel 4 Volume Envelope (R/W)
             *ret_value = this->sound.NR42.raw;
+            return true;
+        case 0xff22: // NR43 - Channel 4 Polynomial Counter (R/W)
+            *ret_value = this->sound.NR43.raw;
             return true;
         case 0xff23: // NR44 - Channel 4 Counter/consecutive; Inital (R/W)
             *ret_value = this->sound.NR44.raw | 0xbf;
@@ -69,6 +75,13 @@ bool sound_handle_get_u8(struct Context *this, uint16_t address, uint8_t *ret_va
                 | 0xf0;
             return true;
     }
+
+    if (address >= 0xff30 && address <= 0xff3f) {
+        // Wave Pattern RAM
+        *ret_value = this->sound.wave_pattern_ram[address - 0xff30].raw;
+        return true;
+    }
+
     return false;
 }
 
