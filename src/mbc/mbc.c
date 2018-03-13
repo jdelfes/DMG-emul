@@ -6,6 +6,7 @@
 #include "debug.h"
 #include "rom_only.h"
 #include "mbc1.h"
+#include "mbc2.h"
 #include "mbc.h"
 
 void mbc_init(struct Context *this) {
@@ -73,8 +74,10 @@ void mbc_init(struct Context *this) {
             this->mbc.type = MBC1;
             mbc1_init(this);
             break;
+        case 0x05: // MBC2
         case 0x06: // MBC2+BATTERY
             this->mbc.type = MBC2;
+            mbc2_init(this);
             break;
         case 0x10: // MBC3+TIMER+RAM+BATTERY
         case 0x13: // MBC3+RAM+BATTERY
@@ -97,6 +100,8 @@ bool mbc_handle_get_u8(const struct Context *this, uint16_t address, uint8_t *re
             return rom_only_handle_get_u8(this, address, ret_value);
         case MBC1:
             return mbc1_handle_get_u8(this, address, ret_value);
+        case MBC2:
+            return mbc2_handle_get_u8(this, address, ret_value);
         default:
             return false;
     }
@@ -108,6 +113,8 @@ bool mbc_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) {
             return rom_only_handle_set_u8(this, address, value);
         case MBC1:
             return mbc1_handle_set_u8(this, address, value);
+        case MBC2:
+            return mbc2_handle_set_u8(this, address, value);
         default:
             return false;
     }
