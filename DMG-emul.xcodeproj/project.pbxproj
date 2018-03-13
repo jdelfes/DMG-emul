@@ -20,6 +20,8 @@
 		AD4DBBB1204B929A00E12E77 /* cb_prefix.c in Sources */ = {isa = PBXBuildFile; fileRef = AD4DBBAC204B929A00E12E77 /* cb_prefix.c */; };
 		AD4DBBB2204B929A00E12E77 /* cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = AD4DBBAD204B929A00E12E77 /* cpu.c */; };
 		AD4DBBB3204B929A00E12E77 /* opcodes.c in Sources */ = {isa = PBXBuildFile; fileRef = AD4DBBAE204B929A00E12E77 /* opcodes.c */; };
+		AD862DA120574DAA00547E55 /* mbc1.c in Sources */ = {isa = PBXBuildFile; fileRef = AD862DA020574DAA00547E55 /* mbc1.c */; };
+		AD862DA420574F7800547E55 /* rom_only.c in Sources */ = {isa = PBXBuildFile; fileRef = AD862DA320574F7800547E55 /* rom_only.c */; };
 		ADCFDE44205370D60037D61C /* snd_card.c in Sources */ = {isa = PBXBuildFile; fileRef = ADCFDE43205370D60037D61C /* snd_card.c */; };
 		ADCFDE4720537A320037D61C /* snd_channel01.c in Sources */ = {isa = PBXBuildFile; fileRef = ADCFDE4620537A320037D61C /* snd_channel01.c */; };
 		ADCFDE4A20537D330037D61C /* snd_duty.c in Sources */ = {isa = PBXBuildFile; fileRef = ADCFDE4920537D330037D61C /* snd_duty.c */; };
@@ -70,6 +72,10 @@
 		AD4DBBAF204B929A00E12E77 /* opcodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opcodes.h; sourceTree = "<group>"; };
 		AD4DBBB0204B929A00E12E77 /* cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cpu.h; sourceTree = "<group>"; };
 		AD4DBBB4204B92A000E12E77 /* definitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = definitions.h; sourceTree = "<group>"; };
+		AD862D9F20574DA900547E55 /* mbc1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mbc1.h; sourceTree = "<group>"; };
+		AD862DA020574DAA00547E55 /* mbc1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mbc1.c; sourceTree = "<group>"; };
+		AD862DA220574F7800547E55 /* rom_only.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rom_only.h; sourceTree = "<group>"; };
+		AD862DA320574F7800547E55 /* rom_only.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = rom_only.c; sourceTree = "<group>"; };
 		ADCFDE42205370D60037D61C /* snd_card.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snd_card.h; sourceTree = "<group>"; };
 		ADCFDE43205370D60037D61C /* snd_card.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = snd_card.c; sourceTree = "<group>"; };
 		ADCFDE4520537A320037D61C /* snd_channel01.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snd_channel01.h; sourceTree = "<group>"; };
@@ -122,6 +128,7 @@
 				AD4DBB8B204B923F00E12E77 /* core */,
 				AD4DBB8C204B924500E12E77 /* cpu */,
 				AD4DBB8D204B925D00E12E77 /* headers */,
+				ADD00CAE205629AA002621D2 /* mbc */,
 				ADCFDE4120536FBC0037D61C /* snd */,
 			);
 			path = src;
@@ -137,8 +144,6 @@
 				AD4DBB9B204B928E00E12E77 /* joypad.c */,
 				AD4DBB9C204B928E00E12E77 /* joypad.h */,
 				AD4DBB9D204B928E00E12E77 /* main.c */,
-				ADF0F361204C8F84008A717A /* mbc.c */,
-				ADF0F360204C8F84008A717A /* mbc.h */,
 				AD4DBB96204B928E00E12E77 /* memory.c */,
 				AD4DBB8E204B928E00E12E77 /* memory.h */,
 				AD4DBB90204B928E00E12E77 /* serial.c */,
@@ -196,6 +201,19 @@
 				AD4DBB8F204B928E00E12E77 /* sound.h */,
 			);
 			path = snd;
+			sourceTree = "<group>";
+		};
+		ADD00CAE205629AA002621D2 /* mbc */ = {
+			isa = PBXGroup;
+			children = (
+				ADF0F361204C8F84008A717A /* mbc.c */,
+				ADF0F360204C8F84008A717A /* mbc.h */,
+				AD862DA020574DAA00547E55 /* mbc1.c */,
+				AD862D9F20574DA900547E55 /* mbc1.h */,
+				AD862DA320574F7800547E55 /* rom_only.c */,
+				AD862DA220574F7800547E55 /* rom_only.h */,
+			);
+			path = mbc;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -266,10 +284,12 @@
 				ADCFDE4A20537D330037D61C /* snd_duty.c in Sources */,
 				AD4DBBB2204B929A00E12E77 /* cpu.c in Sources */,
 				AD4DBBA8204B928E00E12E77 /* main.c in Sources */,
+				AD862DA120574DAA00547E55 /* mbc1.c in Sources */,
 				ADCFDE5020537FB80037D61C /* snd_mixer.c in Sources */,
 				ADCFDE54205454FD0037D61C /* snd_channel03.c in Sources */,
 				AD4DBBB3204B929A00E12E77 /* opcodes.c in Sources */,
 				AD4DBBA7204B928E00E12E77 /* joypad.c in Sources */,
+				AD862DA420574F7800547E55 /* rom_only.c in Sources */,
 				AD4DBBA3204B928E00E12E77 /* interrupts.c in Sources */,
 				ADCFDE44205370D60037D61C /* snd_card.c in Sources */,
 				AD4DBBB1204B929A00E12E77 /* cb_prefix.c in Sources */,

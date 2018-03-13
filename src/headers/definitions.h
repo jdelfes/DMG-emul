@@ -1,7 +1,10 @@
 #ifndef definitions_h
 #define definitions_h
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "flags.h"
 #include "cpu.h"
@@ -63,7 +66,7 @@ struct Context {
     uint64_t cpu_timing;
     struct CPU cpu;
     bool cpu_halted;
-    struct MBC mbc;
+    MBC mbc;
     Interrupts interrupts;
     struct Video video;
     struct Sound sound;
