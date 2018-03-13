@@ -7,6 +7,7 @@
 #include "rom_only.h"
 #include "mbc1.h"
 #include "mbc2.h"
+#include "mbc3.h"
 #include "mbc.h"
 
 void mbc_init(struct Context *this) {
@@ -79,9 +80,13 @@ void mbc_init(struct Context *this) {
             this->mbc.type = MBC2;
             mbc2_init(this);
             break;
+        case 0x0f: // MBC3+TIMER+BATTERY
         case 0x10: // MBC3+TIMER+RAM+BATTERY
+        case 0x11: // MBC3
+        case 0x12: // MBC3+RAM
         case 0x13: // MBC3+RAM+BATTERY
             this->mbc.type = MBC3;
+            mbc3_init(this);
             break;
         case 0x1b: // MBC5+RAM+BATTERY
             this->mbc.type = MBC5;
@@ -102,8 +107,11 @@ bool mbc_handle_get_u8(const struct Context *this, uint16_t address, uint8_t *re
             return mbc1_handle_get_u8(this, address, ret_value);
         case MBC2:
             return mbc2_handle_get_u8(this, address, ret_value);
+        case MBC3:
+            return mbc3_handle_get_u8(this, address, ret_value);
         default:
-            return false;
+            fprintf(stderr, "get_u8 handle not set for %02x\n", this->mbc.type);
+            exit(EXIT_FAILURE);
     }
 }
 
@@ -115,7 +123,10 @@ bool mbc_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) {
             return mbc1_handle_set_u8(this, address, value);
         case MBC2:
             return mbc2_handle_set_u8(this, address, value);
+        case MBC3:
+            return mbc3_handle_set_u8(this, address, value);
         default:
-            return false;
+            fprintf(stderr, "set_u8 handle not set for %02x\n", this->mbc.type);
+            exit(EXIT_FAILURE);
     }
 }
