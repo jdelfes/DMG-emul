@@ -10,7 +10,7 @@
 #include "debug.h"
 #include "cb_prefix.h"
 
-uint8_t CBOpcodeTiming[] = {
+static uint8_t CBOpcodeTiming[] = {
     8, 8, 8, 8, 8, 8, 16, 8, 8, 8, 8, 8, 8, 8, 16, 8, // 0x
     8, 8, 8, 8, 8, 8, 16, 8, 8, 8, 8, 8, 8, 8, 16, 8, // 1x
     8, 8, 8, 8, 8, 8, 16, 8, 8, 8, 8, 8, 8, 8, 16, 8, // 2x

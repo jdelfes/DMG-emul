@@ -11,8 +11,6 @@ struct Opcode {
     uint16_t u16;
 };
 
-extern uint8_t OpcodesTiming[0x100];
-
 struct Opcode next_opcode(struct Context *this);
 
 #endif /* opcodes_h */
