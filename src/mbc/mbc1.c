@@ -93,7 +93,6 @@ bool mbc1_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) {
         return true;
     } else if (address >= 0x2000 && address <= 0x3fff) { // switch bank
         mbc_data->rom_bank_number.lower_bits = value;
-//        mbc_data->rom_bank_number.higher_bits = 0;
         set_rom_bank(this);
         return true;
     } else if (address >= 0x4000 && address <= 0x5fff) {
@@ -116,6 +115,14 @@ bool mbc1_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) {
         }
 #endif
         mbc_data->rom_ram_mode_select = value & 1;
+        if (mbc_data->rom_ram_mode_select == 0) {
+            // change ram bank to 0
+            mbc_data->eram_ptr = mbc_data->eram_data;
+        } else {
+            // ensure ROM bank is on range of 0x1f
+            mbc_data->rom_bank_number.higher_bits = 0;
+            set_rom_bank(this);
+        }
         return true;
     } else if (address >= 0xa000 && address <= 0xbfff) {
         if (mbc_data->eram_enabled && mbc_data->eram_ptr != NULL) {

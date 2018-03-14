@@ -50,7 +50,14 @@ bool mbc2_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) {
     MBC2Data *mbc_data = this->mbc.data;
 
     if (address <= 0x1fff) { // enable external ram
-        mbc_data->ram_enabled = (value & 0x0f) == 0x0a;
+        if (address & 0x0100) {
+#ifdef STRICT_MODE
+            fprintf(stderr, "Invalid address for enable external ram: %04x (%02x)\n", address, value);
+            print_debug(this, EXIT_SUCCESS);
+#endif
+        } else {
+            mbc_data->ram_enabled = (value & 0x0f) == 0x0a;
+        }
         return true;
     } else if (address >= 0x2000 && address <= 0x3fff) { // switch bank
 #ifdef STRICT_MODE
@@ -59,8 +66,15 @@ bool mbc2_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) {
             print_debug(this, EXIT_FAILURE);
         }
 #endif
-        mbc_data->rom_bank_number = value & 0x0f;
-        set_rom_bank(this);
+        if (address & 0x0100) {
+            mbc_data->rom_bank_number = value & 0x0f;
+            set_rom_bank(this);
+        } else {
+#ifdef STRICT_MODE
+            fprintf(stderr, "Invalid address for bank switch: %04x (%02x)\n", address, value);
+            print_debug(this, EXIT_SUCCESS);
+#endif
+        }
         return true;
     } else if (address >= 0xa000 && address <= 0xa1ff) {
         if (mbc_data->ram_enabled) {
