@@ -26,6 +26,9 @@ uint8_t get_mem_u8(struct Context *this, uint16_t address) {
         return get_mem_u8(this, address - 0x2000);
     } else if (address >= 0xfe00 && address <= 0xfe9f) {
         return this->oam[address - 0xfe00];
+    } else if (address >= 0xfea0 && address <= 0xfeff) {
+        // FEA0-FEFF   Not Usable
+        return 0x00;
     } else if (address >= 0xff80 && address <= 0xfffe) {
         return this->hram[address - 0xff80];
     }
