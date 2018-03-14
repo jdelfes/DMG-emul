@@ -52,6 +52,11 @@ struct Opcode next_opcode(struct Context *this) {
 
     opcode.code = get_mem_u8(this, this->cpu.registers.PC);
     opcode.size = OpcodeSize[opcode.code];
+
+    if (this->cpu.halt_bug) {
+        this->cpu.halt_bug = false;
+        this->cpu.registers.PC--;
+    }
     switch (opcode.size) {
         case 0:
             fprintf(stderr, "Invalid opcode %02x\n", opcode.code);

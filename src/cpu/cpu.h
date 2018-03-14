@@ -66,6 +66,7 @@ struct __attribute__((packed)) CPU {
         uint16_t SP;
         uint16_t PC;
     } registers;
+    bool halt_bug;
     uint32_t clock;
 };
 
