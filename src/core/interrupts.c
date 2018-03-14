@@ -7,7 +7,7 @@
 #include "debug.h"
 #include "interrupts.h"
 
-void interrupt_service(struct Context *this, uint16_t address) {
+static void interrupt_service(struct Context *this, uint16_t address) {
     this->interrupts.IME = false;
     push16(this, this->cpu.registers.PC);
     this->cpu.registers.PC = address;
@@ -36,7 +36,7 @@ bool interrupts_handle_set_u8(struct Context *this, uint16_t address, uint8_t va
     switch (address) {
         case 0xff0f: // IF - Interrupt Flag (R/W)
             d_printf("IF %02x\n", value);
-            this->interrupts.IF.raw = value;
+            this->interrupts.IF.raw = value & 0x1f;
             return true;
         case 0xffff: // IE - Interrupt Enable (R/W)
             d_printf("IE %02x\n", value);
@@ -47,8 +47,12 @@ bool interrupts_handle_set_u8(struct Context *this, uint16_t address, uint8_t va
 }
 
 void interrupts_check(struct Context *this) {
-    if (this->interrupts.IME && this->interrupts.interrupt_happened) {
-        this->interrupts.interrupt_happened = false;
+    if (this->interrupts.enable_interrupts_step > 0 &&
+        --this->interrupts.enable_interrupts_step == 0) {
+        this->interrupts.IME = true;
+    }
+
+    if (this->interrupts.IME) {
         if (this->interrupts.IE.v_blank && this->interrupts.IF.v_blank) {
             d_printf("vblank int\n");
             this->interrupts.IF.v_blank = 0;
@@ -73,9 +77,7 @@ void interrupts_check(struct Context *this) {
         return;
     }
 
-    if (this->interrupts.IME) {
-        this->interrupts.interrupt_happened = (this->interrupts.IE.raw & this->interrupts.IF.raw) ? true : false;
-    } else if (this->cpu_halted && (this->interrupts.IE.raw & this->interrupts.IF.raw & 0x1f)) {
+    if (this->cpu_halted && (this->interrupts.IE.raw & this->interrupts.IF.raw & 0x1f)) {
         this->cpu_halted = false;
     }
 }

@@ -3,7 +3,7 @@
 
 typedef struct __attribute__((packed)) {
     bool IME;
-    bool interrupt_happened;
+    int enable_interrupts_step;
     union {
         uint8_t raw;
         struct {

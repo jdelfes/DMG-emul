@@ -942,7 +942,7 @@ uint8_t cpu_execute(struct Context *this, const struct Opcode opcode) {
             this->cpu.registers.A.byte = get_mem_u8(this, opcode.u16);
             break;
         case 0xfb: // EI
-            this->interrupts.IME = true;
+            this->interrupts.enable_interrupts_step = 2;
             break;
         case 0xfe: // CP d8
             cp_func(this, opcode.u8);
