@@ -54,7 +54,6 @@ bool timer_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) 
 }
 
 void timer_check(struct Context *this) {
-    uint16_t previous = this->timer.DIV.internal;
     uint64_t diff = this->cpu_timing - this->timer.DIV.last_update;
     if (diff > 4) {
         fprintf(stderr, "timer_check too late, step %llu\n", diff);
@@ -63,22 +62,23 @@ void timer_check(struct Context *this) {
     this->timer.DIV.internal += diff;
     this->timer.DIV.last_update = this->cpu_timing;
 
-    if (this->timer.TAC.enable) {
-        uint8_t bit;
-        switch (this->timer.TAC.clock_select) {
-            case 0: bit = 10; break;
-            case 1: bit = 3; break;
-            case 2: bit = 5; break;
-            case 3: bit = 7; break;
-            default: exit(EXIT_FAILURE);
-        }
-
-        if (((~this->timer.DIV.internal) & previous) & (1 << bit)) {
-            this->timer.TIMA++;
-            if (this->timer.TIMA == 0) {
-                this->timer.TIMA = this->timer.TMA;
-                this->interrupts.IF.timer = 1;
-            }
+    uint8_t bit;
+    switch (this->timer.TAC.clock_select) {
+        case 0: bit = 10; break;
+        case 1: bit = 3; break;
+        case 2: bit = 5; break;
+        case 3: bit = 7; break;
+        default: exit(EXIT_FAILURE);
+    }
+    uint8_t tac_freq_bit_value = (this->timer.DIV.internal & (1 << bit)) ? 1 : 0;
+    uint8_t falling_edge_new = (tac_freq_bit_value & this->timer.TAC.enable) ? 0 : 1;
+    if (falling_edge_new & this->timer.falling_edge_delay) {
+        this->timer.TIMA++;
+        if (this->timer.TIMA == 0) {
+            this->timer.TIMA = this->timer.TMA;
+            this->interrupts.IF.timer = 1;
         }
     }
+
+    this->timer.falling_edge_delay = this->timer.TAC.enable & tac_freq_bit_value;
 }

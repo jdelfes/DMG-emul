@@ -21,6 +21,7 @@ typedef struct __attribute__((packed)) {
         };
     } TAC;
     uint8_t TMA;
+    uint8_t falling_edge_delay: 1;
 } Timer;
 
 bool timer_handle_get_u8(struct Context *this, uint16_t address, uint8_t *ret_value);
