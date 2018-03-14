@@ -20,7 +20,10 @@ void mbc1_init(struct Context *this) {
             exit(EXIT_FAILURE);
     }
 
-    if ((has_ram && this->rom_header->ram_size == 0) ||
+    if (
+#ifdef STRICT_MODE
+        (has_ram && this->rom_header->ram_size == 0) ||
+#endif
         (!has_ram && this->rom_header->ram_size > 0)) {
         fprintf(stderr, "Weird RAM size match for type: %02x (%02x)\n",
                 this->rom_header->catridge_type, this->rom_header->ram_size);
