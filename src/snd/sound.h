@@ -151,6 +151,7 @@ struct Sound {
             uint8_t sound_4_s02: 1;
         };
     } NR51;
+    bool sound_enabled;
     Channel01 channel01;
     Channel02 channel02;
     Channel03 channel03;
