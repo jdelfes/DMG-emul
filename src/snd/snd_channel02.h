@@ -7,18 +7,15 @@ typedef struct {
     uint64_t freq_timer;
     uint8_t duty_step;
     uint8_t length_counter;
-    uint8_t envelope_volume;
-    uint8_t envelope_step;
+    struct {
+        bool enabled;
+        uint8_t volume;
+        uint8_t period;
+    } envelope;
     float last_sample;
-    union {
-        uint64_t timer;
-        struct {
-            uint64_t : 13;
-            uint64_t step: 3;
-        };
-    } frame;
 } Channel02;
 
+void snd_channel02_tick_frame_seq(struct Context *this, int step);
 void snd_channel02_tick(struct Context *this);
 
 #endif /* snd_channel01_h */

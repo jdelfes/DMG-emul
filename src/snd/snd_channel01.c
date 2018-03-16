@@ -6,8 +6,74 @@
 #include "snd_duty.h"
 #include "snd_channel01.h"
 
+void snd_channel01_tick_frame_seq(struct Context *this, int step) {
+    Channel01 *channel = &this->sound.channel01;
+
+    switch (step) {
+        case 2:
+        case 6:
+            // sweep
+            if (channel->freq_sweep.enabled && this->sound.NR10.sweep_time) {
+                if (channel->freq_sweep.period > 0) {
+                    channel->freq_sweep.period--;
+                }
+                if (channel->freq_sweep.period == 0) {
+                    uint16_t new_freq = snd_channel01_freq_sweep_new_value(this);
+                    if (new_freq > 2047) {
+                        channel->enabled = false;
+                        new_freq = 2047;
+                    }
+
+                    if (this->sound.NR10.sweep_shift) {
+                        this->sound.NR13_14.channel_freq = new_freq;
+                        uint16_t freq = snd_channel01_freq_sweep_new_value(this);
+                        if (freq > 2047) {
+                            channel->enabled = false;
+                        }
+                    }
+                    channel->freq_sweep.period = this->sound.NR10.sweep_time;
+                }
+            }
+        case 0:
+        case 4:
+            if (this->sound.NR13_14.counter_consecutive_selection) {
+                if (channel->length_counter > 0) {
+                    channel->length_counter--;
+                }
+
+                if (channel->length_counter == 0) {
+                    channel->enabled = false;
+                }
+            }
+            break;
+        case 7:
+            if (channel->envelope.enabled) {
+                if (--channel->envelope.period == 0) {
+                    if (this->sound.NR12.envelope_direction) {
+                        if (channel->envelope.volume < 15) {
+                            channel->envelope.volume++;
+                        } else {
+                            channel->envelope.volume = 15;
+                            channel->envelope.enabled = false;
+                        }
+                    } else {
+                        if (channel->envelope.volume > 0) {
+                            channel->envelope.volume--;
+                        } else {
+                            channel->envelope.volume = 0;
+                            channel->envelope.enabled = false;
+                        }
+                    }
+                    channel->envelope.period = this->sound.NR12.number_envelope_sweep;
+                }
+            }
+            break;
+    }
+}
+
 void snd_channel01_tick(struct Context *this) {
     Channel01 *channel = &this->sound.channel01;
+
     if (!channel->enabled) {
         channel->last_sample = 0;
         return;
@@ -15,8 +81,6 @@ void snd_channel01_tick(struct Context *this) {
 
     uint64_t diff = this->cpu_timing - channel->last_update;
     channel->last_update = this->cpu_timing;
-    uint64_t previous_frame_step = channel->frame.step;
-    channel->frame.timer += diff;
     channel->freq_timer += diff;
 
     const uint64_t freq_period = (2048 - this->sound.NR13_14.channel_freq) * 4;
@@ -31,68 +95,20 @@ void snd_channel01_tick(struct Context *this) {
 
     float value = snd_duty_value(this->sound.NR11.wave_pattern_duty, channel->duty_step);
 
-    if (previous_frame_step != channel->frame.step) {
-        switch (channel->frame.step) {
-            case 2:
-            case 6:
-                // sweep
-                if (this->sound.NR10.sweep_time > 0) {
-                    channel->sweep_freq_step++;
-                    if (channel->sweep_freq_step == this->sound.NR10.sweep_time) {
-                        channel->sweep_freq_step = 0;
-                    }
-                    uint16_t freq = this->sound.NR13_14.channel_freq;
-                    freq >>= this->sound.NR10.sweep_shift;
-                    if (this->sound.NR10.sweep_direction) {
-                        if (this->sound.NR13_14.channel_freq > freq) {
-                            freq = this->sound.NR13_14.channel_freq - freq;
-                        }
-                    } else {
-                        freq = this->sound.NR13_14.channel_freq + freq;
-                        if (freq > 2047) {
-                            channel->enabled = false;
-                            freq = 2047;
-                        }
-                    }
-                    this->sound.NR13_14.channel_freq = freq;
-                }
-            case 0:
-            case 4:
-                if (this->sound.NR13_14.counter_consecutive_selection) {
-                    if (channel->length_counter > 0) {
-                        channel->length_counter--;
-                    } else {
-                        channel->length_counter = 0;
-                        channel->enabled = false;
-                    }
-                }
-                break;
-            case 7:
-                if (this->sound.NR12.number_envelope_sweep > 0) {
-                    channel->envelope_step++;
-                    if (channel->envelope_step == this->sound.NR12.number_envelope_sweep) {
-                        channel->envelope_step = 0;
-
-                        if (this->sound.NR12.envelope_direction) {
-                            if (channel->envelope_volume < 15) {
-                                channel->envelope_volume++;
-                            }
-                        } else {
-                            if (channel->envelope_volume > 0) {
-                                channel->envelope_volume--;
-                            }
-                        }
-                    }
-                } else {
-//                    channel->envelope_volume = 15;
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    value *= channel->envelope_volume / 15.0;
+    value *= channel->envelope.volume / 15.0;
 
     channel->last_sample = value;
+}
+
+uint16_t snd_channel01_freq_sweep_new_value(struct Context *this) {
+    uint16_t freq = this->sound.NR13_14.channel_freq;
+    freq >>= this->sound.NR10.sweep_shift;
+    if (this->sound.NR10.sweep_direction) {
+        if (this->sound.NR13_14.channel_freq > freq) {
+            freq = this->sound.NR13_14.channel_freq - freq;
+        }
+    } else {
+        freq = this->sound.NR13_14.channel_freq + freq;
+    }
+    return freq;
 }

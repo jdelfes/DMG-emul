@@ -5,16 +5,58 @@
 #include "snd_duty.h"
 #include "snd_channel04.h"
 
+void snd_channel04_tick_frame_seq(struct Context *this, int step) {
+    Channel04 *channel = &this->sound.channel04;
+
+    switch (step) {
+        case 0:
+        case 2:
+        case 4:
+        case 6:
+            if (this->sound.NR44.counter_consecutive_selection) {
+                if (channel->length_counter > 0) {
+                    channel->length_counter--;
+                }
+
+                if (channel->length_counter == 0) {
+                    channel->enabled = false;
+                }
+            }
+            break;
+        case 7:
+            if (channel->envelope.enabled) {
+                if (--channel->envelope.period == 0) {
+                    if (this->sound.NR42.envelope_direction) {
+                        if (channel->envelope.volume < 15) {
+                            channel->envelope.volume++;
+                        } else {
+                            channel->envelope.volume = 15;
+                            channel->envelope.enabled = false;
+                        }
+                    } else {
+                        if (channel->envelope.volume > 0) {
+                            channel->envelope.volume--;
+                        } else {
+                            channel->envelope.volume = 0;
+                            channel->envelope.enabled = false;
+                        }
+                    }
+                    channel->envelope.period = this->sound.NR42.number_envelope_sweep;
+                }
+            }
+            break;
+    }
+}
+
 void snd_channel04_tick(struct Context *this) {
     Channel04 *channel = &this->sound.channel04;
+
     if (!channel->enabled) {
         channel->last_sample = 0;
         return;
     }
     uint64_t diff = this->cpu_timing - channel->last_update;
     channel->last_update = this->cpu_timing;
-    uint64_t previous_frame_step = channel->frame.step;
-    channel->frame.timer += diff;
     channel->freq_timer += diff;
 
     uint16_t pow = this->sound.NR43.div_ratio_freq + 1;
@@ -36,47 +78,7 @@ void snd_channel04_tick(struct Context *this) {
 
     float value = (channel->lfsr.raw & 1) ? -1 : 1;
 
-    if (previous_frame_step != channel->frame.step) {
-        switch (channel->frame.step) {
-            case 2:
-            case 6:
-            case 0:
-            case 4:
-                if (this->sound.NR44.counter_consecutive_selection) {
-                    if (channel->length_counter > 0) {
-                        channel->length_counter--;
-                    } else {
-                        channel->length_counter = 0;
-                        channel->enabled = false;
-                    }
-                }
-                break;
-            case 7:
-                if (this->sound.NR42.number_envelope_sweep > 0) {
-                    channel->envelope_step++;
-                    if (channel->envelope_step == this->sound.NR42.number_envelope_sweep) {
-                        channel->envelope_step = 0;
-
-                        if (this->sound.NR42.envelope_direction) {
-                            if (channel->envelope_volume < 15) {
-                                channel->envelope_volume++;
-                            }
-                        } else {
-                            if (channel->envelope_volume > 0) {
-                                channel->envelope_volume--;
-                            }
-                        }
-                    }
-                } else {
-//                    channel->envelope_volume = 15;
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    value *= channel->envelope_volume / 15.0;
+    value *= channel->envelope.volume / 15.0;
 
     channel->last_sample = value;
 }

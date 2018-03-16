@@ -6,6 +6,7 @@
 #include "snd_channel03.h"
 #include "snd_channel04.h"
 #include "snd_mixer.h"
+#include "snd_frame_seq.h"
 #include "snd_card.h"
 
 typedef union {
@@ -79,6 +80,7 @@ struct Sound {
             uint16_t counter_consecutive_selection: 1;
         };
     } NR23_24;
+    uint8_t NR30;
     uint8_t NR31;
     union {
         uint8_t raw;
@@ -124,7 +126,7 @@ struct Sound {
     union {
         uint8_t raw;
         struct {
-            uint8_t : 4;
+            uint8_t : 6;
             uint8_t counter_consecutive_selection: 1;
         };
     } NR44;
@@ -152,6 +154,7 @@ struct Sound {
         };
     } NR51;
     bool sound_enabled;
+    FrameSeq frame_seq;
     Channel01 channel01;
     Channel02 channel02;
     Channel03 channel03;

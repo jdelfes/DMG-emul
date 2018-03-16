@@ -25,6 +25,7 @@
 		AD862DA72057684D00547E55 /* mbc2.c in Sources */ = {isa = PBXBuildFile; fileRef = AD862DA62057684D00547E55 /* mbc2.c */; };
 		AD862DAA2057739400547E55 /* mbc3.c in Sources */ = {isa = PBXBuildFile; fileRef = AD862DA92057739400547E55 /* mbc3.c */; };
 		AD862DAD20577E1300547E55 /* mbc5.c in Sources */ = {isa = PBXBuildFile; fileRef = AD862DAC20577E1300547E55 /* mbc5.c */; };
+		AD9F9110205CB88F0061D36F /* snd_frame_seq.c in Sources */ = {isa = PBXBuildFile; fileRef = AD9F910F205CB88E0061D36F /* snd_frame_seq.c */; };
 		ADCFDE44205370D60037D61C /* snd_card.c in Sources */ = {isa = PBXBuildFile; fileRef = ADCFDE43205370D60037D61C /* snd_card.c */; };
 		ADCFDE4720537A320037D61C /* snd_channel01.c in Sources */ = {isa = PBXBuildFile; fileRef = ADCFDE4620537A320037D61C /* snd_channel01.c */; };
 		ADCFDE4A20537D330037D61C /* snd_duty.c in Sources */ = {isa = PBXBuildFile; fileRef = ADCFDE4920537D330037D61C /* snd_duty.c */; };
@@ -85,6 +86,8 @@
 		AD862DA92057739400547E55 /* mbc3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mbc3.c; sourceTree = "<group>"; };
 		AD862DAB20577E1300547E55 /* mbc5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mbc5.h; sourceTree = "<group>"; };
 		AD862DAC20577E1300547E55 /* mbc5.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mbc5.c; sourceTree = "<group>"; };
+		AD9F910E205CB88E0061D36F /* snd_frame_seq.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snd_frame_seq.h; sourceTree = "<group>"; };
+		AD9F910F205CB88E0061D36F /* snd_frame_seq.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = snd_frame_seq.c; sourceTree = "<group>"; };
 		ADCFDE42205370D60037D61C /* snd_card.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snd_card.h; sourceTree = "<group>"; };
 		ADCFDE43205370D60037D61C /* snd_card.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = snd_card.c; sourceTree = "<group>"; };
 		ADCFDE4520537A320037D61C /* snd_channel01.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snd_channel01.h; sourceTree = "<group>"; };
@@ -204,6 +207,8 @@
 				ADCFDE55205461C10037D61C /* snd_channel04.h */,
 				ADCFDE4920537D330037D61C /* snd_duty.c */,
 				ADCFDE4820537D330037D61C /* snd_duty.h */,
+				AD9F910F205CB88E0061D36F /* snd_frame_seq.c */,
+				AD9F910E205CB88E0061D36F /* snd_frame_seq.h */,
 				ADCFDE4F20537FB80037D61C /* snd_mixer.c */,
 				ADCFDE4E20537FB80037D61C /* snd_mixer.h */,
 				AD4DBB99204B928E00E12E77 /* sound.c */,
@@ -310,6 +315,7 @@
 				AD862DA72057684D00547E55 /* mbc2.c in Sources */,
 				AD862DAA2057739400547E55 /* mbc3.c in Sources */,
 				ADCFDE44205370D60037D61C /* snd_card.c in Sources */,
+				AD9F9110205CB88F0061D36F /* snd_frame_seq.c in Sources */,
 				AD4DBBB1204B929A00E12E77 /* cb_prefix.c in Sources */,
 				ADCFDE4720537A320037D61C /* snd_channel01.c in Sources */,
 				AD4DBBA2204B928E00E12E77 /* video.c in Sources */,
