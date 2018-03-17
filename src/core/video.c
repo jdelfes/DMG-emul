@@ -309,11 +309,11 @@ static void render_line(struct Context *this, uint16_t line_number) {
 
     // render sprites
     if (this->video.LCDC.obj_display_enable) {
-        const struct Sprite *visible_sprites[sizeof(this->sprites)];
+        const Sprite *visible_sprites[sizeof(this->sprites)];
         uint8_t sprite_height = this->video.LCDC.obj_size ? 16 : 8;
         uint8_t visibles = 0;
         for (uint8_t i = 0; i < (sizeof(this->sprites) / sizeof(this->sprites[0])); i++) {
-            const struct Sprite *sprite = &this->sprites[i];
+            const Sprite *sprite = &this->sprites[i];
             if (sprite->x_pos != 0 &&
                 (line_number + 16) >= sprite->y_pos &&
                 (line_number + 16) < (sprite->y_pos + sprite_height)) {
@@ -330,7 +330,7 @@ static void render_line(struct Context *this, uint16_t line_number) {
                 for (int i = 0; i < (visibles - 1); i++) {
                     for (int j = i + 1; j < visibles; j++) {
                         if (visible_sprites[i]->x_pos > visible_sprites[j]->x_pos) {
-                            const struct Sprite *p = visible_sprites[i];
+                            const Sprite *p = visible_sprites[i];
                             visible_sprites[i] = visible_sprites[j];
                             visible_sprites[j] = p;
                         }
@@ -339,7 +339,7 @@ static void render_line(struct Context *this, uint16_t line_number) {
             }
             for (uint16_t x = 0; x < 160; x++) {
                 for (uint8_t i = 0; i < visibles; i++) {
-                    const struct Sprite *sprite = visible_sprites[i];
+                    const Sprite *sprite = visible_sprites[i];
                     int diff_x = x - (sprite->x_pos - 8);
                     if (diff_x >= 0 && diff_x < 8) {
                         if (sprite->flags.obj_priority &&

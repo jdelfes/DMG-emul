@@ -4,7 +4,7 @@
 struct Context;
 struct Opcode;
 
-struct __attribute__((packed)) Byte {
+typedef struct __attribute__((packed)) {
     union {
         uint8_t byte;
         struct {
@@ -22,9 +22,9 @@ struct __attribute__((packed)) Byte {
             uint8_t b7: 1;
         };
     };
-};
+} Byte;
 
-struct __attribute__((packed)) CPU {
+typedef struct __attribute__((packed)) {
     struct {
         union {
             uint16_t AF;
@@ -39,28 +39,28 @@ struct __attribute__((packed)) CPU {
                         uint8_t zf: 1;
                     } flags;
                 };
-                struct Byte A;
+                Byte A;
             };
         };
         union {
             uint16_t BC;
             struct {
-                struct Byte C;
-                struct Byte B;
+                Byte C;
+                Byte B;
             };
         };
         union {
             uint16_t DE;
             struct {
-                struct Byte E;
-                struct Byte D;
+                Byte E;
+                Byte D;
             };
         };
         union {
             uint16_t HL;
             struct {
-                struct Byte L;
-                struct Byte H;
+                Byte L;
+                Byte H;
             };
         };
         uint16_t SP;
@@ -68,7 +68,7 @@ struct __attribute__((packed)) CPU {
     } registers;
     bool halt_bug;
     uint32_t clock;
-};
+} CPU;
 
 uint8_t cpu_execute(struct Context *this, const struct Opcode opcode);
 void push16(struct Context *this, uint16_t value);

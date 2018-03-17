@@ -9,7 +9,7 @@
 #include "snd_frame_seq.h"
 #include "snd_card.h"
 
-typedef union {
+typedef union __attribute__((packed)) {
     uint8_t raw;
     struct {
         uint8_t nibble0: 4;
@@ -17,7 +17,7 @@ typedef union {
     };
 } WavePattern;
 
-struct Sound {
+typedef struct __attribute__((packed)) {
     union {
         uint8_t raw;
         struct {
@@ -153,6 +153,10 @@ struct Sound {
             uint8_t sound_4_s02: 1;
         };
     } NR51;
+} SoundRegs;
+
+typedef struct {
+    SoundRegs regs;
     bool sound_enabled;
     FrameSeq frame_seq;
     Channel01 channel01;
@@ -161,7 +165,7 @@ struct Sound {
     Channel04 channel04;
     Mixer mixer;
     SoundCard sound_card;
-};
+} Sound;
 
 int sound_init(struct Context *this);
 void sound_tick(struct Context *this);

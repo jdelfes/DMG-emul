@@ -16,7 +16,7 @@
 #include "joypad.h"
 #include "mbc.h"
 
-struct __attribute__((packed)) ROM_HEADER {
+typedef struct __attribute__((packed)) {
     uint8_t _[0x100];
     uint8_t entry_point[4];
     uint8_t logo[0x30];
@@ -38,38 +38,22 @@ struct __attribute__((packed)) ROM_HEADER {
     uint8_t mask_rom_version_number;
     uint8_t header_checksum;
     uint8_t global_checksum[2];
-};
-
-struct __attribute__((packed)) Sprite {
-    uint8_t y_pos;
-    uint8_t x_pos;
-    uint8_t tile_number;
-    union {
-        uint8_t raw;
-        struct {
-            uint8_t : 4;
-            uint8_t palette_number: 1;
-            uint8_t x_flip: 1;
-            uint8_t y_flip: 1;
-            uint8_t obj_priority: 1;
-        };
-    } flags;
-};
+} ROMHeader;
 
 struct Context {
     uint8_t *bios_rom;
     off_t rom_size;
     union {
         uint8_t *rom_data;
-        struct ROM_HEADER *rom_header;
+        ROMHeader *rom_header;
     };
     uint64_t cpu_timing;
-    struct CPU cpu;
+    CPU cpu;
     bool cpu_halted;
     MBC mbc;
     Interrupts interrupts;
-    struct Video video;
-    struct Sound sound;
+    Video video;
+    Sound sound;
     Timer timer;
     Serial serial;
     Joypad joypad;
@@ -78,7 +62,7 @@ struct Context {
     uint8_t wram_bank_1[0x1000]; // D000-DFFF   4KB Work RAM Bank 1 (WRAM)  (switchable bank 1-7 in CGB Mode)
     union {
         uint8_t oam[0xa0]; // FE00-FE9F   Sprite Attribute Table (OAM)
-        struct Sprite sprites[0x40];
+        Sprite sprites[0x40];
     };
     uint8_t hram[0xFFFF - 0xFF80]; // FF80-FFFE   High RAM (HRAM)
 };

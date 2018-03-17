@@ -5,7 +5,7 @@ typedef struct {
     bool enabled;
     uint64_t last_update;
     uint64_t freq_timer;
-    union {
+    union __attribute__((packed)) {
         uint16_t raw;
         struct {
             uint16_t bit0: 1;

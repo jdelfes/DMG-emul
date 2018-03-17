@@ -28,16 +28,16 @@ static uint8_t OpcodesTiming[] = {
     12, 12, 8, 4, 0, 16, 8, 16, 12, 8, 16, 4, 0, 0, 8, 16 // Fx
 };
 
-void inc_func(struct Context *this, struct Byte *reg);
-void dec_func(struct Context *this, struct Byte *reg);
-void add_a_func(struct Context *this, struct Byte *reg_src);
-void adc_a_func(struct Context *this, struct Byte *reg_src);
-void sub_func(struct Context *this, struct Byte *reg_src);
-void sbc_a_func(struct Context *this, struct Byte *reg_src);
-void and_func(struct Context *this, uint8_t value);
-void xor_func(struct Context *this, uint8_t value);
-void or_func(struct Context *this, uint8_t value);
-void cp_func(struct Context *this, uint8_t value);
+static void inc_func(struct Context *this, Byte *reg);
+static void dec_func(struct Context *this, Byte *reg);
+static void add_a_func(struct Context *this, Byte *reg_src);
+static void adc_a_func(struct Context *this, Byte *reg_src);
+static void sub_func(struct Context *this, Byte *reg_src);
+static void sbc_a_func(struct Context *this, Byte *reg_src);
+static void and_func(struct Context *this, uint8_t value);
+static void xor_func(struct Context *this, uint8_t value);
+static void or_func(struct Context *this, uint8_t value);
+static void cp_func(struct Context *this, uint8_t value);
 
 uint8_t cpu_execute(struct Context *this, const struct Opcode opcode) {
     uint8_t temp_u8;
@@ -990,21 +990,21 @@ uint16_t pop16(struct Context *this) {
     return value;
 }
 
-void inc_func(struct Context *this, struct Byte *reg) {
+static void inc_func(struct Context *this, Byte *reg) {
     this->cpu.registers.flags.h = (reg->n0 + 1) >> 4;
     reg->byte++;
     this->cpu.registers.flags.zf = (reg->byte == 0) ? 1 : 0;
     this->cpu.registers.flags.n = 0;
 }
 
-void dec_func(struct Context *this, struct Byte *reg) {
+static void dec_func(struct Context *this, Byte *reg) {
     this->cpu.registers.flags.h = (reg->n0 == 0) ? 1 : 0;
     reg->byte--;
     this->cpu.registers.flags.zf = (reg->byte == 0) ? 1 : 0;
     this->cpu.registers.flags.n = 1;
 }
 
-void add_a_func(struct Context *this, struct Byte *reg_src) {
+static void add_a_func(struct Context *this, Byte *reg_src) {
     this->cpu.registers.flags.h = (this->cpu.registers.A.n0 + reg_src->n0) >> 4;
     uint16_t temp_u16 = this->cpu.registers.A.byte + reg_src->byte;
     this->cpu.registers.A.byte = temp_u16;
@@ -1013,7 +1013,7 @@ void add_a_func(struct Context *this, struct Byte *reg_src) {
     this->cpu.registers.flags.cy = temp_u16 >> 8;
 }
 
-void adc_a_func(struct Context *this, struct Byte *reg_src) {
+static void adc_a_func(struct Context *this, Byte *reg_src) {
     this->cpu.registers.flags.h = (this->cpu.registers.A.n0 + reg_src->n0 + this->cpu.registers.flags.cy) >> 4;
     uint16_t temp_u16 = this->cpu.registers.A.byte + reg_src->byte + this->cpu.registers.flags.cy;
     this->cpu.registers.A.byte = temp_u16;
@@ -1022,7 +1022,7 @@ void adc_a_func(struct Context *this, struct Byte *reg_src) {
     this->cpu.registers.flags.cy = temp_u16 >> 8;
 }
 
-void sub_func(struct Context *this, struct Byte *reg_src) {
+static void sub_func(struct Context *this, Byte *reg_src) {
     this->cpu.registers.flags.h = this->cpu.registers.A.n0 < reg_src->n0;
     this->cpu.registers.flags.cy = this->cpu.registers.A.byte < reg_src->byte;
     this->cpu.registers.A.byte -= reg_src->byte;
@@ -1030,7 +1030,7 @@ void sub_func(struct Context *this, struct Byte *reg_src) {
     this->cpu.registers.flags.n = 1;
 }
 
-void sbc_a_func(struct Context *this, struct Byte *reg_src) {
+static void sbc_a_func(struct Context *this, Byte *reg_src) {
     this->cpu.registers.flags.h = (this->cpu.registers.A.n0 < (reg_src->n0 + this->cpu.registers.flags.cy)) ? 1 : 0;
     uint16_t temp_u16 = reg_src->byte + this->cpu.registers.flags.cy;
     this->cpu.registers.flags.cy = (this->cpu.registers.A.byte < temp_u16) ? 1 : 0;
@@ -1039,7 +1039,7 @@ void sbc_a_func(struct Context *this, struct Byte *reg_src) {
     this->cpu.registers.flags.n = 1;
 }
 
-void and_func(struct Context *this, uint8_t value) {
+static void and_func(struct Context *this, uint8_t value) {
     this->cpu.registers.A.byte &= value;
     this->cpu.registers.flags.zf = (this->cpu.registers.A.byte == 0) ? 1 : 0;
     this->cpu.registers.flags.n = 0;
@@ -1047,19 +1047,19 @@ void and_func(struct Context *this, uint8_t value) {
     this->cpu.registers.flags.cy = 0;
 }
 
-void xor_func(struct Context *this, uint8_t value) {
+static void xor_func(struct Context *this, uint8_t value) {
     this->cpu.registers.A.byte ^= value;
     this->cpu.registers.F = 0;
     this->cpu.registers.flags.zf = (this->cpu.registers.A.byte == 0) ? 1 : 0;
 }
 
-void or_func(struct Context *this, uint8_t value) {
+static void or_func(struct Context *this, uint8_t value) {
     this->cpu.registers.A.byte |= value;
     this->cpu.registers.F = 0;
     this->cpu.registers.flags.zf = (this->cpu.registers.A.byte == 0) ? 1 : 0;
 }
 
-void cp_func(struct Context *this, uint8_t value) {
+static void cp_func(struct Context *this, uint8_t value) {
     this->cpu.registers.flags.zf = (this->cpu.registers.A.byte == value) ? 1 : 0;
     this->cpu.registers.flags.n = 1;
     this->cpu.registers.flags.h = (this->cpu.registers.A.n0 < (value & 0x0f)) ? 1 : 0;

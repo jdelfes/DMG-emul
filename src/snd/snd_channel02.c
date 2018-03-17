@@ -13,7 +13,7 @@ void snd_channel02_tick_frame_seq(struct Context *this, int step) {
         case 2:
         case 4:
         case 6:
-            if (this->sound.NR23_24.counter_consecutive_selection) {
+            if (this->sound.regs.NR23_24.counter_consecutive_selection) {
                 if (channel->length_counter > 0) {
                     channel->length_counter--;
                 }
@@ -26,7 +26,7 @@ void snd_channel02_tick_frame_seq(struct Context *this, int step) {
         case 7:
             if (channel->envelope.enabled) {
                 if (--channel->envelope.period == 0) {
-                    if (this->sound.NR22.envelope_direction) {
+                    if (this->sound.regs.NR22.envelope_direction) {
                         if (channel->envelope.volume < 15) {
                             channel->envelope.volume++;
                         } else {
@@ -41,7 +41,7 @@ void snd_channel02_tick_frame_seq(struct Context *this, int step) {
                             channel->envelope.enabled = false;
                         }
                     }
-                    channel->envelope.period = this->sound.NR22.number_envelope_sweep;
+                    channel->envelope.period = this->sound.regs.NR22.number_envelope_sweep;
                 }
             }
             break;
@@ -59,7 +59,7 @@ void snd_channel02_tick(struct Context *this) {
     channel->last_update = this->cpu_timing;
     channel->freq_timer += diff;
 
-    const uint64_t freq_period = (2048 - this->sound.NR23_24.channel_freq) * 4;
+    const uint64_t freq_period = (2048 - this->sound.regs.NR23_24.channel_freq) * 4;
     if (channel->freq_timer >= freq_period) {
         channel->freq_timer -= freq_period;
 
@@ -69,7 +69,7 @@ void snd_channel02_tick(struct Context *this) {
         }
     }
 
-    float value = snd_duty_value(this->sound.NR21.wave_pattern_duty, channel->duty_step);
+    float value = snd_duty_value(this->sound.regs.NR21.wave_pattern_duty, channel->duty_step);
 
     value *= channel->envelope.volume / 15.0;
 

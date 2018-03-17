@@ -1,7 +1,7 @@
 #ifndef video_h
 #define video_h
 
-struct __attribute__((packed)) Pixel {
+typedef struct __attribute__((packed)) {
     union {
         struct {
             uint8_t b;
@@ -11,12 +11,28 @@ struct __attribute__((packed)) Pixel {
         };
         uint32_t raw;
     };
-};
+} Pixel;
 
-struct __attribute__((packed)) Video {
+typedef struct __attribute__((packed)) {
+    uint8_t y_pos;
+    uint8_t x_pos;
+    uint8_t tile_number;
+    union {
+        uint8_t raw;
+        struct {
+            uint8_t : 4;
+            uint8_t palette_number: 1;
+            uint8_t x_flip: 1;
+            uint8_t y_flip: 1;
+            uint8_t obj_priority: 1;
+        };
+    } flags;
+} Sprite;
+
+typedef struct __attribute__((packed)) {
     uint64_t last_cpu_timing;
     uint64_t timing;
-    struct Pixel screen[144][160];
+    Pixel screen[144][160];
     union {
         uint8_t raw;
         struct {
@@ -74,7 +90,7 @@ struct __attribute__((packed)) Video {
     } OBP1;
     uint8_t WY;
     uint8_t WX;
-};
+} Video;
 
 void video_init(void);
 bool video_handle_get_u8(struct Context *this, uint16_t address, uint8_t *ret_value);

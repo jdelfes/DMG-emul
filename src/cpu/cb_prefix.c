@@ -29,34 +29,34 @@ static uint8_t CBOpcodeTiming[] = {
     8, 8, 8, 8, 8, 8, 16, 8, 8, 8, 8, 8, 8, 8, 16, 8  // fx
 };
 
-struct Byte rlc_func_v(struct Context *this, struct Byte value);
-void rlc_func(struct Context *this, struct Byte *reg);
-uint8_t rrc_func_v(struct Context *this, uint8_t value);
-void rrc_func(struct Context *this, struct Byte *reg);
-uint8_t rl_func_v(struct Context *this, uint8_t value);
-void rl_func(struct Context *this, struct Byte *reg);
-uint8_t rr_func_v(struct Context *this, uint8_t value);
-void rr_func(struct Context *this, struct Byte *reg);
-uint8_t sla_func_v(struct Context *this, uint8_t value);
-void sla_func(struct Context *this, struct Byte *reg);
-uint8_t sra_func_v(struct Context *this, uint8_t value);
-void sra_func(struct Context *this, struct Byte *reg);
-uint8_t swap_func_v(struct Context *this, uint8_t value);
-void swap_func(struct Context *this, struct Byte *reg);
-uint8_t srl_func_v(struct Context *this, uint8_t value);
-void srl_func(struct Context *this, struct Byte *reg);
-void bit0_func(struct Context *this, struct Byte value);
-void bit1_func(struct Context *this, struct Byte value);
-void bit2_func(struct Context *this, struct Byte value);
-void bit3_func(struct Context *this, struct Byte value);
-void bit4_func(struct Context *this, struct Byte value);
-void bit5_func(struct Context *this, struct Byte value);
-void bit6_func(struct Context *this, struct Byte value);
-void bit7_func(struct Context *this, struct Byte value);
+static Byte rlc_func_v(struct Context *this, Byte value);
+static void rlc_func(struct Context *this, Byte *reg);
+static uint8_t rrc_func_v(struct Context *this, uint8_t value);
+static void rrc_func(struct Context *this, Byte *reg);
+static uint8_t rl_func_v(struct Context *this, uint8_t value);
+static void rl_func(struct Context *this, Byte *reg);
+static uint8_t rr_func_v(struct Context *this, uint8_t value);
+static void rr_func(struct Context *this, Byte *reg);
+static uint8_t sla_func_v(struct Context *this, uint8_t value);
+static void sla_func(struct Context *this, Byte *reg);
+static uint8_t sra_func_v(struct Context *this, uint8_t value);
+static void sra_func(struct Context *this, Byte *reg);
+static uint8_t swap_func_v(struct Context *this, uint8_t value);
+static void swap_func(struct Context *this, Byte *reg);
+static uint8_t srl_func_v(struct Context *this, uint8_t value);
+static void srl_func(struct Context *this, Byte *reg);
+static void bit0_func(struct Context *this, Byte value);
+static void bit1_func(struct Context *this, Byte value);
+static void bit2_func(struct Context *this, Byte value);
+static void bit3_func(struct Context *this, Byte value);
+static void bit4_func(struct Context *this, Byte value);
+static void bit5_func(struct Context *this, Byte value);
+static void bit6_func(struct Context *this, Byte value);
+static void bit7_func(struct Context *this, Byte value);
 
 uint8_t parse_cb(struct Context *this) {
     uint8_t cb_opcode = get_mem_u8(this, this->cpu.registers.PC++);
-    struct Byte temp_u8;
+    Byte temp_u8;
 
     switch (cb_opcode) {
         case 0x00: // RLC B
@@ -883,8 +883,8 @@ uint8_t parse_cb(struct Context *this) {
     return CBOpcodeTiming[cb_opcode];
 }
 
-struct Byte rlc_func_v(struct Context *this, struct Byte value) {
-    struct Byte temp_u8;
+static  Byte rlc_func_v(struct Context *this, Byte value) {
+    Byte temp_u8;
     temp_u8.byte = (value.byte << 1) | value.b7;
     this->cpu.registers.flags.zf = (temp_u8.byte == 0) ? 1 : 0;
     this->cpu.registers.flags.n = 0;
@@ -893,11 +893,11 @@ struct Byte rlc_func_v(struct Context *this, struct Byte value) {
     return temp_u8;
 }
 
-void rlc_func(struct Context *this, struct Byte *reg) {
+static void rlc_func(struct Context *this, Byte *reg) {
     *reg = rlc_func_v(this, *reg);
 }
 
-uint8_t rrc_func_v(struct Context *this, uint8_t value) {
+static uint8_t rrc_func_v(struct Context *this, uint8_t value) {
     uint8_t temp_u8 = (value >> 1) | (value << 7);
     this->cpu.registers.flags.zf = (temp_u8 == 0) ? 1 : 0;
     this->cpu.registers.flags.n = 0;
@@ -906,11 +906,11 @@ uint8_t rrc_func_v(struct Context *this, uint8_t value) {
     return temp_u8;
 }
 
-void rrc_func(struct Context *this, struct Byte *reg) {
+static void rrc_func(struct Context *this, Byte *reg) {
     reg->byte = rrc_func_v(this, reg->byte);
 }
 
-uint8_t rl_func_v(struct Context *this, uint8_t value) {
+static uint8_t rl_func_v(struct Context *this, uint8_t value) {
     uint16_t temp_u16 = (value << 1) | this->cpu.registers.flags.cy;
     uint8_t temp_u8 = temp_u16;
     this->cpu.registers.flags.zf = (temp_u8 == 0) ? 1 : 0;
@@ -920,11 +920,11 @@ uint8_t rl_func_v(struct Context *this, uint8_t value) {
     return temp_u8;
 }
 
-void rl_func(struct Context *this, struct Byte *reg) {
+static void rl_func(struct Context *this, Byte *reg) {
     reg->byte = rl_func_v(this, reg->byte);
 }
 
-uint8_t rr_func_v(struct Context *this, uint8_t value) {
+static uint8_t rr_func_v(struct Context *this, uint8_t value) {
     uint8_t temp_u8 = (this->cpu.registers.flags.cy << 7) | (value >> 1);
     this->cpu.registers.flags.cy = value;
     this->cpu.registers.flags.zf = (temp_u8 == 0) ? 1 : 0;
@@ -933,11 +933,11 @@ uint8_t rr_func_v(struct Context *this, uint8_t value) {
     return temp_u8;
 }
 
-void rr_func(struct Context *this, struct Byte *reg) {
+static void rr_func(struct Context *this, Byte *reg) {
     reg->byte = rr_func_v(this, reg->byte);
 }
 
-uint8_t sla_func_v(struct Context *this, uint8_t value) {
+static uint8_t sla_func_v(struct Context *this, uint8_t value) {
     this->cpu.registers.flags.cy = value >> 7;
     uint8_t temp_u8 = value << 1;
     this->cpu.registers.flags.zf = (temp_u8 == 0) ? 1 : 0;
@@ -946,11 +946,11 @@ uint8_t sla_func_v(struct Context *this, uint8_t value) {
     return temp_u8;
 }
 
-void sla_func(struct Context *this, struct Byte *reg) {
+static void sla_func(struct Context *this, Byte *reg) {
     reg->byte = sla_func_v(this, reg->byte);
 }
 
-uint8_t sra_func_v(struct Context *this, uint8_t value) {
+static uint8_t sra_func_v(struct Context *this, uint8_t value) {
     this->cpu.registers.flags.cy = value;
     uint8_t temp_u8 = (value >> 1) | (value & 0x80);
     this->cpu.registers.flags.zf = (temp_u8 == 0) ? 1 : 0;
@@ -959,22 +959,22 @@ uint8_t sra_func_v(struct Context *this, uint8_t value) {
     return temp_u8;
 }
 
-void sra_func(struct Context *this, struct Byte *reg) {
+static void sra_func(struct Context *this, Byte *reg) {
     reg->byte = sra_func_v(this, reg->byte);
 }
 
-uint8_t swap_func_v(struct Context *this, uint8_t value) {
+static uint8_t swap_func_v(struct Context *this, uint8_t value) {
     uint8_t temp_u8 = (value << 4) | (value >> 4);
     this->cpu.registers.F = 0;
     this->cpu.registers.flags.zf = (temp_u8 == 0) ? 1 : 0;
     return temp_u8;
 }
 
-void swap_func(struct Context *this, struct Byte *reg) {
+static void swap_func(struct Context *this, Byte *reg) {
     reg->byte = swap_func_v(this, reg->byte);
 }
 
-uint8_t srl_func_v(struct Context *this, uint8_t value) {
+static uint8_t srl_func_v(struct Context *this, uint8_t value) {
     this->cpu.registers.flags.cy = value;
     uint8_t temp_u8 = value >> 1;
     this->cpu.registers.flags.zf = (temp_u8 == 0) ? 1 : 0;
@@ -983,53 +983,53 @@ uint8_t srl_func_v(struct Context *this, uint8_t value) {
     return temp_u8;
 }
 
-void srl_func(struct Context *this, struct Byte *reg) {
+static void srl_func(struct Context *this, Byte *reg) {
     reg->byte = srl_func_v(this, reg->byte);
 }
 
-void bit0_func(struct Context *this, struct Byte value) {
+static void bit0_func(struct Context *this, Byte value) {
     this->cpu.registers.flags.zf = !value.b0;
     this->cpu.registers.flags.n = 0;
     this->cpu.registers.flags.h = 1;
 }
 
-void bit1_func(struct Context *this, struct Byte value) {
+static void bit1_func(struct Context *this, Byte value) {
     this->cpu.registers.flags.zf = !value.b1;
     this->cpu.registers.flags.n = 0;
     this->cpu.registers.flags.h = 1;
 }
 
-void bit2_func(struct Context *this, struct Byte value) {
+static void bit2_func(struct Context *this, Byte value) {
     this->cpu.registers.flags.zf = !value.b2;
     this->cpu.registers.flags.n = 0;
     this->cpu.registers.flags.h = 1;
 }
 
-void bit3_func(struct Context *this, struct Byte value) {
+static void bit3_func(struct Context *this, Byte value) {
     this->cpu.registers.flags.zf = !value.b3;
     this->cpu.registers.flags.n = 0;
     this->cpu.registers.flags.h = 1;
 }
 
-void bit4_func(struct Context *this, struct Byte value) {
+static void bit4_func(struct Context *this, Byte value) {
     this->cpu.registers.flags.zf = !value.b4;
     this->cpu.registers.flags.n = 0;
     this->cpu.registers.flags.h = 1;
 }
 
-void bit5_func(struct Context *this, struct Byte value) {
+static void bit5_func(struct Context *this, Byte value) {
     this->cpu.registers.flags.zf = !value.b5;
     this->cpu.registers.flags.n = 0;
     this->cpu.registers.flags.h = 1;
 }
 
-void bit6_func(struct Context *this, struct Byte value) {
+static void bit6_func(struct Context *this, Byte value) {
     this->cpu.registers.flags.zf = !value.b6;
     this->cpu.registers.flags.n = 0;
     this->cpu.registers.flags.h = 1;
 }
 
-void bit7_func(struct Context *this, struct Byte value) {
+static void bit7_func(struct Context *this, Byte value) {
     this->cpu.registers.flags.zf = !value.b7;
     this->cpu.registers.flags.n = 0;
     this->cpu.registers.flags.h = 1;

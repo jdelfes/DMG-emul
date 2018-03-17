@@ -5,7 +5,7 @@ typedef struct __attribute__((packed)) {
     uint8_t *rom_extra_bank;
     uint8_t rom_bank_number;
     bool ram_enabled;
-    struct Byte ram_data[512]; // A000-A1FF    512x4bits built-in
+    Byte ram_data[512]; // A000-A1FF    512x4bits built-in
 } MBC2Data;
 
 void mbc2_init(struct Context *this);
