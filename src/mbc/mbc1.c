@@ -66,7 +66,16 @@ bool mbc1_handle_get_u8(const struct Context *this, uint16_t address, uint8_t *r
         *ret_value = this->rom_data[address];
         return true;
     } else if (address >= 0x4000 && address <= 0x7fff) {
-        *ret_value = mbc_data->rom_extra_bank[address - 0x4000];
+        if (mbc_data->rom_extra_bank) {
+            *ret_value = mbc_data->rom_extra_bank[address - 0x4000];
+        } else {
+#ifdef STRICT_MODE
+            fprintf(stderr, "trying to read from NULL ROM bank: %04x\n", address);
+            print_debug(this, EXIT_FAILURE);
+#else
+            *ret_value = 0xff;
+#endif
+        }
         return true;
     } else if (address >= 0xa000 && address <= 0xbfff) {
         if (mbc_data->eram_enabled && mbc_data->eram_ptr != NULL) {
@@ -96,16 +105,20 @@ bool mbc1_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) {
         set_rom_bank(this);
         return true;
     } else if (address >= 0x4000 && address <= 0x5fff) {
+#ifdef STRICT_MODE
         if (value > 3) {
             fprintf(stderr, "wrong ROM/RAM bank change: %02x\n", value);
             print_debug(this, EXIT_FAILURE);
         }
+#endif
         if (mbc_data->rom_ram_mode_select) {
+            if (value > 3) {
+                value = 0;
+            }
             mbc_data->eram_ptr = mbc_data->eram_data + (value * 0x2000);
-        } else {
-            mbc_data->rom_bank_number.higher_bits = value;
-            set_rom_bank(this);
         }
+        mbc_data->rom_bank_number.higher_bits = value;
+        set_rom_bank(this);
         return true;
     } else if (address >= 0x6000 && address <= 0x7fff) {
 #ifdef STRICT_MODE
@@ -118,11 +131,8 @@ bool mbc1_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) {
         if (mbc_data->rom_ram_mode_select == 0) {
             // change ram bank to 0
             mbc_data->eram_ptr = mbc_data->eram_data;
-        } else {
-            // ensure ROM bank is on range of 0x1f
-            mbc_data->rom_bank_number.higher_bits = 0;
-            set_rom_bank(this);
         }
+        set_rom_bank(this);
         return true;
     } else if (address >= 0xa000 && address <= 0xbfff) {
         if (mbc_data->eram_enabled && mbc_data->eram_ptr != NULL) {
@@ -141,14 +151,26 @@ bool mbc1_handle_set_u8(struct Context *this, uint16_t address, uint8_t value) {
 
 static void set_rom_bank(struct Context *this) {
     MBC1Data *mbc_data = this->mbc.data;
+    uint8_t bank = mbc_data->rom_bank_number.raw;
 
     if (mbc_data->rom_bank_number.lower_bits == 0) {
-        mbc_data->rom_bank_number.lower_bits = 1;
+        bank |= 1;
     }
 
-    mbc_data->rom_extra_bank = this->rom_data + (0x4000 * mbc_data->rom_bank_number.raw);
+    if (mbc_data->rom_ram_mode_select == 0) {
+        bank &= 0x1f;
+    }
+
+    const uint8_t max_bank = this->rom_size >> 14;
+    bank %= max_bank;
+
+    mbc_data->rom_extra_bank = this->rom_data + (0x4000 * bank);
     if ((mbc_data->rom_extra_bank + 0x4000) > (this->rom_data + this->rom_size)) {
+#ifdef STRICT_MODE
         fprintf(stderr, "wrong bank change: %02x\n", mbc_data->rom_bank_number.raw);
         print_debug(this, EXIT_FAILURE);
+#else
+        mbc_data->rom_extra_bank = NULL;
+#endif
     }
 }
