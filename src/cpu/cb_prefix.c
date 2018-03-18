@@ -42,10 +42,11 @@ static Byte res_func(struct Context *this, Byte value, uint8_t bit);
 static Byte set_func(struct Context *this, Byte value, uint8_t bit);
 
 uint8_t parse_cb(struct Context *this) {
-    uint8_t cb_opcode = get_mem_u8(this, this->cpu.registers.PC++);
+    Instruction cb_opcode;
+    cb_opcode.byte = get_mem_u8(this, this->cpu.registers.PC++);
     Byte temp_u8;
 
-    switch (cb_opcode & 0x07) {
+    switch (cb_opcode.z) {
         case 0: temp_u8 = this->cpu.registers.B; break;
         case 1: temp_u8 = this->cpu.registers.C; break;
         case 2: temp_u8 = this->cpu.registers.D; break;
@@ -57,42 +58,25 @@ uint8_t parse_cb(struct Context *this) {
         default: exit(EXIT_FAILURE);
     }
 
-    switch (cb_opcode & 0xf8) {
-        case 0x00: temp_u8 = rlc_func(this, temp_u8); break;
-        case 0x08: temp_u8 = rrc_func(this, temp_u8); break;
-        case 0x10: temp_u8 = rl_func(this, temp_u8); break;
-        case 0x18: temp_u8 = rr_func(this, temp_u8); break;
-        case 0x20: temp_u8 = sla_func(this, temp_u8); break;
-        case 0x28: temp_u8 = sra_func(this, temp_u8); break;
-        case 0x30: temp_u8 = swap_func(this, temp_u8); break;
-        case 0x38: temp_u8 = srl_func(this, temp_u8); break;
-        case 0x40: temp_u8 = bit_func(this, temp_u8, 0); break;
-        case 0x48: temp_u8 = bit_func(this, temp_u8, 1); break;
-        case 0x50: temp_u8 = bit_func(this, temp_u8, 2); break;
-        case 0x58: temp_u8 = bit_func(this, temp_u8, 3); break;
-        case 0x60: temp_u8 = bit_func(this, temp_u8, 4); break;
-        case 0x68: temp_u8 = bit_func(this, temp_u8, 5); break;
-        case 0x70: temp_u8 = bit_func(this, temp_u8, 6); break;
-        case 0x78: temp_u8 = bit_func(this, temp_u8, 7); break;
-        case 0x80: temp_u8 = res_func(this, temp_u8, 0); break;
-        case 0x88: temp_u8 = res_func(this, temp_u8, 1); break;
-        case 0x90: temp_u8 = res_func(this, temp_u8, 2); break;
-        case 0x98: temp_u8 = res_func(this, temp_u8, 3); break;
-        case 0xa0: temp_u8 = res_func(this, temp_u8, 4); break;
-        case 0xa8: temp_u8 = res_func(this, temp_u8, 5); break;
-        case 0xb0: temp_u8 = res_func(this, temp_u8, 6); break;
-        case 0xb8: temp_u8 = res_func(this, temp_u8, 7); break;
-        case 0xc0: temp_u8 = set_func(this, temp_u8, 0); break;
-        case 0xc8: temp_u8 = set_func(this, temp_u8, 1); break;
-        case 0xd0: temp_u8 = set_func(this, temp_u8, 2); break;
-        case 0xd8: temp_u8 = set_func(this, temp_u8, 3); break;
-        case 0xe0: temp_u8 = set_func(this, temp_u8, 4); break;
-        case 0xe8: temp_u8 = set_func(this, temp_u8, 5); break;
-        case 0xf0: temp_u8 = set_func(this, temp_u8, 6); break;
-        case 0xf8: temp_u8 = set_func(this, temp_u8, 7); break;
+    switch (cb_opcode.x) {
+        case 0:
+            switch (cb_opcode.y) {
+                case 0: temp_u8 = rlc_func(this, temp_u8); break;
+                case 1: temp_u8 = rrc_func(this, temp_u8); break;
+                case 2: temp_u8 = rl_func(this, temp_u8); break;
+                case 3: temp_u8 = rr_func(this, temp_u8); break;
+                case 4: temp_u8 = sla_func(this, temp_u8); break;
+                case 5: temp_u8 = sra_func(this, temp_u8); break;
+                case 6: temp_u8 = swap_func(this, temp_u8); break;
+                case 7: temp_u8 = srl_func(this, temp_u8); break;
+            }
+            break;
+        case 1: bit_func(this, temp_u8, cb_opcode.y); break;
+        case 2: temp_u8 = res_func(this, temp_u8, cb_opcode.y); break;
+        case 3: temp_u8 = set_func(this, temp_u8, cb_opcode.y); break;
     }
 
-    switch (cb_opcode & 0x07) {
+    switch (cb_opcode.z) {
         case 0: this->cpu.registers.B = temp_u8; break;
         case 1: this->cpu.registers.C = temp_u8; break;
         case 2: this->cpu.registers.D = temp_u8; break;
@@ -100,11 +84,10 @@ uint8_t parse_cb(struct Context *this) {
         case 4: this->cpu.registers.H = temp_u8; break;
         case 5: this->cpu.registers.L = temp_u8; break;
         case 6: set_mem_u8(this, this->cpu.registers.HL, temp_u8.byte); break;
-        case 7: this->cpu.registers.A  = temp_u8; break;
-        default: exit(EXIT_FAILURE);
+        case 7: this->cpu.registers.A = temp_u8; break;
     }
 
-    return CBOpcodeTiming[cb_opcode];
+    return CBOpcodeTiming[cb_opcode.byte];
 }
 
 static Byte rlc_func(struct Context *this, Byte value) {

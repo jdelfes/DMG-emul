@@ -24,6 +24,15 @@ typedef struct __attribute__((packed)) {
     };
 } Byte;
 
+typedef union {
+    uint8_t byte;
+    struct {
+        uint8_t z: 3;
+        uint8_t y: 3;
+        uint8_t x: 2;
+    };
+} Instruction;
+
 typedef struct __attribute__((packed)) {
     struct {
         union {
