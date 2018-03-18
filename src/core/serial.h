@@ -7,8 +7,7 @@ typedef struct __attribute__((packed)) {
         uint8_t raw;
         struct {
             uint8_t shift_clock: 1;
-            uint8_t clock_speed: 1;
-            uint8_t : 5;
+            uint8_t : 6;
             uint8_t transfer_start: 1;
         };
     } SC;

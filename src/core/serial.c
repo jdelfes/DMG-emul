@@ -17,10 +17,7 @@ void serial_tick(struct Context *this) {
     }
 
     uint64_t diff = this->cpu_timing - this->serial.last_transfer_started;
-    uint16_t period = this->cpu.clock >>
-        (this->serial.SC.clock_speed ?
-         15 : // 262144Hz * 8 bits
-         10); // 8192Hz * 8 bits
+    uint16_t period = this->cpu.clock >> 10; // 8192Hz * 8 bits
     if (diff >= period) {
         this->serial.SC.transfer_start = 0;
         this->interrupts.IF.serial = 1;
@@ -33,7 +30,7 @@ bool serial_handle_get_u8(struct Context *this, uint16_t address, uint8_t *ret_v
             *ret_value = 0xff;
             return true;
         case 0xff02: // SC - Serial Transfer Control (R/W)
-            *ret_value = this->serial.SC.raw;
+            *ret_value = this->serial.SC.raw | 0x7e;
             return true;
     }
     return false;
